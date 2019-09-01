@@ -13,7 +13,13 @@ import {
 import firebase from '../../firebase/firebase';
 
 class Register extends Component {
-  state = { username: '', email: '', password: '', passwordConfirm: '' };
+  state = {
+    username: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+    errors: []
+  };
 
   handleChange = evt => {
     this.setState({
@@ -21,12 +27,58 @@ class Register extends Component {
     });
   };
 
+  isFormValid = () => {
+    let errors = [];
+    let error;
+    if (this.isFormEmpty(this.state)) {
+      error = { message: 'Please fill out all fields' };
+      this.setState({ errors: errors.concat(error) });
+      return false;
+    } else if (this.isPasswordEqualToPasswordConfirm(this.state)) {
+      error = { message: 'Passwords must match' };
+      this.setState({ errors: errors.concat(error) });
+      return false;
+    } else if (!this.isPasswordValid(this.state.password)) {
+      error = { message: 'Password must be at least eigth characters long' };
+      this.setState({ errors: errors.concat(error) });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  isFormEmpty = ({ username, email, password, passwordConfirm }) => {
+    return (
+      !username.length ||
+      !email.length ||
+      !password.length ||
+      !passwordConfirm.length
+    );
+  };
+
+  isPasswordEqualToPasswordConfirm = ({ password, passworConfirm }) => {
+    if (password !== passworConfirm) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  isPasswordValid = password => {
+    if (password.length < 8) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  displayErrors = errors =>
+    errors.map((error, i) => <p key={i}>{error.message}</p>);
+
   handleSubmit = evt => {
     evt.preventDefault();
-    const { email, password, passwordConfirm } = this.state;
-    if (password !== passwordConfirm) {
-      alert('Passwords do not match');
-    } else {
+    const { email, password } = this.state;
+    if (this.isFormValid()) {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
@@ -46,7 +98,7 @@ class Register extends Component {
   };
 
   render() {
-    const { username, email, password, passwordConfirm } = this.state;
+    const { username, email, password, passwordConfirm, errors } = this.state;
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -102,6 +154,12 @@ class Register extends Component {
               </Button>
             </Segment>
           </Form>
+          {errors.length > 0 && (
+            <Message error>
+              <h3>Error</h3>
+              {this.displayErrors(errors)}
+            </Message>
+          )}
           <Message>
             Already a user? <Link to="/login">Login here</Link>
           </Message>
