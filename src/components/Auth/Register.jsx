@@ -10,6 +10,7 @@ import {
   Message,
   Segment
 } from 'semantic-ui-react';
+import firebase from '../../firebase/firebase';
 
 class Register extends Component {
   state = { username: '', email: '', password: '', passwordConfirm: '' };
@@ -20,7 +21,33 @@ class Register extends Component {
     });
   };
 
+  handleSubmit = evt => {
+    evt.preventDefault();
+    const { email, password, passwordConfirm } = this.state;
+    if (password !== passwordConfirm) {
+      alert('Passwords do not match');
+    } else {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(newUser => {
+          alert('User created');
+          this.setState({
+            username: '',
+            email: '',
+            password: '',
+            passwordConfirm: ''
+          });
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  };
+
   render() {
+    const { username, email, password, passwordConfirm } = this.state;
+
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <GridColumn style={{ maxWidth: 450 }}>
@@ -28,12 +55,13 @@ class Register extends Component {
             <Icon name="puzzle piece" color="orange" />
             Register to begin chatting!
           </Header>
-          <Form size="large">
+          <Form size="large" onSubmit={this.handleSubmit}>
             <Segment stacked>
               <Form.Input
                 fluid
                 type="text"
                 name="username"
+                value={username}
                 icon="user"
                 iconPosition="left"
                 placeholder="Username"
@@ -43,6 +71,7 @@ class Register extends Component {
                 fluid
                 type="email"
                 name="email"
+                value={email}
                 icon="mail"
                 iconPosition="left"
                 placeholder="Email Address"
@@ -52,6 +81,7 @@ class Register extends Component {
                 fluid
                 type="password"
                 name="password"
+                value={password}
                 icon="lock"
                 iconPosition="left"
                 placeholder="Password"
@@ -61,6 +91,7 @@ class Register extends Component {
                 fluid
                 type="password"
                 name="passwordConfirm"
+                value={passwordConfirm}
                 icon="repeat"
                 iconPosition="left"
                 placeholder="Confirm Password"
