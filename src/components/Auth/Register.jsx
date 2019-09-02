@@ -18,7 +18,8 @@ class Register extends Component {
     email: '',
     password: '',
     passwordConfirm: '',
-    errors: []
+    errors: [],
+    loading: false
   };
 
   handleChange = evt => {
@@ -62,8 +63,8 @@ class Register extends Component {
     );
   };
 
-  isPasswordEqualToPasswordConfirm = ({ password, passworConfirm }) => {
-    if (password !== passworConfirm) {
+  isPasswordEqualToPasswordConfirm = ({ password, passwordConfirm }) => {
+    if (password !== passwordConfirm) {
       return false;
     } else {
       return true;
@@ -85,26 +86,38 @@ class Register extends Component {
     evt.preventDefault();
     const { email, password } = this.state;
     if (this.isFormValid()) {
+      this.setState({ loading: true });
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(newUser => {
-          alert('User created');
           this.setState({
             username: '',
             email: '',
             password: '',
-            passwordConfirm: ''
+            passwordConfirm: '',
+            loading: false
           });
         })
         .catch(error => {
           console.error(error);
+          this.setState({
+            loading: false,
+            errors: [error]
+          });
         });
     }
   };
 
   render() {
-    const { username, email, password, passwordConfirm, errors } = this.state;
+    const {
+      username,
+      email,
+      password,
+      passwordConfirm,
+      errors,
+      loading
+    } = this.state;
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -155,7 +168,14 @@ class Register extends Component {
                 placeholder="Confirm Password"
                 onChange={this.handleChange}
               />
-              <Button type="submit" color="orange" fluid size="large">
+              <Button
+                disabled={loading}
+                className={loading ? 'loading' : ''}
+                type="submit"
+                color="orange"
+                fluid
+                size="large"
+              >
                 Submit
               </Button>
             </Segment>
