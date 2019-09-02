@@ -82,6 +82,15 @@ class Register extends Component {
   displayErrors = errors =>
     errors.map((error, i) => <p key={i}>{error.message}</p>);
 
+  handleInputErrors = (errors, inputValue, inputName) => {
+    return errors.some(error =>
+      error.message.toLowerCase().includes(inputName)
+    ) ||
+      (errors.length && !inputValue)
+      ? 'error'
+      : '';
+  };
+
   handleSubmit = evt => {
     evt.preventDefault();
     const { email, password } = this.state;
@@ -137,6 +146,7 @@ class Register extends Component {
                 iconPosition="left"
                 placeholder="Username"
                 onChange={this.handleChange}
+                className={this.handleInputErrors(errors, username, 'username')}
               />
               <Form.Input
                 fluid
@@ -147,6 +157,7 @@ class Register extends Component {
                 iconPosition="left"
                 placeholder="Email Address"
                 onChange={this.handleChange}
+                className={this.handleInputErrors(errors, email, 'email')}
               />
               <Form.Input
                 fluid
@@ -157,6 +168,7 @@ class Register extends Component {
                 iconPosition="left"
                 placeholder="Password"
                 onChange={this.handleChange}
+                className={this.handleInputErrors(errors, password, 'password')}
               />
               <Form.Input
                 fluid
@@ -167,6 +179,11 @@ class Register extends Component {
                 iconPosition="left"
                 placeholder="Confirm Password"
                 onChange={this.handleChange}
+                className={this.handleInputErrors(
+                  errors,
+                  passwordConfirm,
+                  'password'
+                )}
               />
               <Button
                 disabled={loading}
