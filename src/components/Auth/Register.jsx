@@ -28,21 +28,27 @@ class Register extends Component {
   };
 
   isFormValid = () => {
+    let isValid = true;
     let errors = [];
-    let error;
     if (this.isFormEmpty(this.state)) {
-      error = { message: 'Please fill out all fields' };
-      this.setState({ errors: errors.concat(error) });
-      return false;
-    } else if (this.isPasswordEqualToPasswordConfirm(this.state)) {
-      error = { message: 'Passwords must match' };
-      this.setState({ errors: errors.concat(error) });
-      return false;
-    } else if (!this.isPasswordValid(this.state.password)) {
-      error = { message: 'Password must be at least eigth characters long' };
-      this.setState({ errors: errors.concat(error) });
+      errors.push({ message: 'Please fill in all fields' });
+      isValid = false;
+    }
+    if (!this.isPasswordEqualToPasswordConfirm(this.state)) {
+      errors.push({ message: 'Passwords must match' });
+      isValid = false;
+    }
+    if (!this.isPasswordValid(this.state.password)) {
+      errors.push({
+        message: 'Password must be at least eigth characters long'
+      });
+      isValid = false;
+    }
+    if (!isValid) {
+      this.setState({ errors });
       return false;
     } else {
+      this.setState({ errors: [] });
       return true;
     }
   };
