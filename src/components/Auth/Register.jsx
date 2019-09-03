@@ -1,3 +1,4 @@
+import md5 from 'md5';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -11,7 +12,6 @@ import {
   Segment
 } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
-import md5 from 'md5';
 
 class Register extends Component {
   state = {
@@ -84,6 +84,13 @@ class Register extends Component {
   displayErrors = errors =>
     errors.map((error, i) => <p key={i}>{error.message}</p>);
 
+  saveUser = newUser => {
+    return this.state.usersRef.child(newUser.user.uid).set({
+      displayName: newUser.user.displayName,
+      avatar: newUser.user.photoURL
+    });
+  };
+
   handleInputErrors = (errors, inputValue, inputName) => {
     return errors.some(error =>
       error.message.toLowerCase().includes(inputName)
@@ -110,14 +117,15 @@ class Register extends Component {
               )}?d=identicon`
             })
             .then(() => {
-              this.saveUser(newUser).then(() => {
-                this.setState({
-                  username: '',
-                  email: '',
-                  password: '',
-                  passwordConfirm: '',
-                  loading: false
-                });
+              this.saveUser(newUser);
+            })
+            .then(() => {
+              this.setState({
+                username: '',
+                email: '',
+                password: '',
+                passwordConfirm: '',
+                loading: false
               });
             })
             .catch(error => {
@@ -136,13 +144,6 @@ class Register extends Component {
           });
         });
     }
-  };
-
-  saveUser = newUser => {
-    return this.state.usersRef.child(newUser.user.uid).set({
-      displayName: newUser.user.displayName,
-      avatar: newUser.user.photoURL
-    });
   };
 
   render() {
