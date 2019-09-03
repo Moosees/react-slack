@@ -11,6 +11,7 @@ import {
   Segment
 } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
+import md5 from 'md5';
 
 class Register extends Component {
   state = {
@@ -19,7 +20,8 @@ class Register extends Component {
     password: '',
     passwordConfirm: '',
     errors: [],
-    loading: false
+    loading: false,
+    usersRef: firebase.database().ref('users')
   };
 
   handleChange = evt => {
@@ -93,20 +95,38 @@ class Register extends Component {
 
   handleSubmit = evt => {
     evt.preventDefault();
-    const { email, password } = this.state;
+    const { username, email, password } = this.state;
     if (this.isFormValid()) {
       this.setState({ loading: true });
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(newUser => {
-          this.setState({
-            username: '',
-            email: '',
-            password: '',
-            passwordConfirm: '',
-            loading: false
-          });
+          newUser.user
+            .updateProfile({
+              displayName: username,
+              photoURL: `https://gravatar.com/avatar/${md5(
+                newUser.user.email
+              )}?d=identicon`
+            })
+            .then(() => {
+              this.saveUser(newUser).then(() => {
+                this.setState({
+                  username: '',
+                  email: '',
+                  password: '',
+                  passwordConfirm: '',
+                  loading: false
+                });
+              });
+            })
+            .catch(error => {
+              console.error(error);
+              this.setState({
+                loading: false,
+                errors: [error]
+              });
+            });
         })
         .catch(error => {
           console.error(error);
@@ -116,6 +136,13 @@ class Register extends Component {
           });
         });
     }
+  };
+
+  saveUser = newUser => {
+    return this.state.usersRef.child(newUser.user.uid).set({
+      displayName: newUser.user.displayName,
+      avatar: newUser.user.photoURL
+    });
   };
 
   render() {
