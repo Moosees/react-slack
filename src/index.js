@@ -33,11 +33,10 @@ class Root extends Component {
   }
 
   render() {
-    return this.props.isLoading ? (
-      <Spinner />
-    ) : (
+    const { isLoading } = this.props;
+    return (
       <Switch>
-        <Route exact path="/" component={App} />
+        <Route exact path="/" component={isLoading ? Spinner : App} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
       </Switch>
