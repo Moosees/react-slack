@@ -15,28 +15,41 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Spinner from './components/Spinner';
 import firebase from './firebase/firebase';
-import { setUser } from './redux/actions';
+import { clearUser, setUser } from './redux/actions';
 import rootReducer from './redux/reducers';
 import * as serviceWorker from './serviceWorker';
 
 const store = createStore(rootReducer, composeWithDevTools());
 
 class Root extends Component {
+  unsubscribeFromAuthChange = null;
+
   componentDidMount() {
-    const { history, setUser } = this.props;
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        setUser(user);
-        history.push('/');
-      }
-    });
+    const { history, setUser, clearUser } = this.props;
+    this.unsubscribeFromAuthChange = firebase
+      .auth()
+      .onAuthStateChanged(user => {
+        if (user) {
+          setUser(user);
+          history.push('/');
+        } else {
+          clearUser();
+          history.push('/login');
+        }
+      });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeFromAuthChange();
   }
 
   render() {
     const { isLoading } = this.props;
-    return (
+    return isLoading ? (
+      <Spinner></Spinner>
+    ) : (
       <Switch>
-        <Route exact path="/" component={isLoading ? Spinner : App} />
+        <Route exact path="/" component={App} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
       </Switch>
@@ -51,7 +64,7 @@ const mapStateToProps = ({ user: { isLoading } }) => ({
 const RootWithAuth = withRouter(
   connect(
     mapStateToProps,
-    { setUser }
+    { setUser, clearUser }
   )(Root)
 );
 
