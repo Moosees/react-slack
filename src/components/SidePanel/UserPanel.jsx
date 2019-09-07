@@ -11,7 +11,7 @@ class UserPanel extends Component {
           Signed in as <strong>User</strong>
         </span>
       ),
-      diabled: true
+      disabled: true
     },
     {
       key: 'avatar',
