@@ -232,7 +232,7 @@ class Register extends Component {
             </Message>
           )}
           <Message>
-            Already a user? <Link to="/login">Login here</Link>
+            Already a user? <Link to="/login">Sign in here</Link>
           </Message>
         </GridColumn>
       </Grid>

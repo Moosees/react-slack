@@ -73,7 +73,7 @@ class Login extends Component {
         <GridColumn style={{ maxWidth: 450 }}>
           <Header as="h1" icon size="large" color="violet" textAlign="center">
             <Icon name="code branch" color="violet" />
-            Login to begin chatting!
+            Sign in to begin chatting!
           </Header>
           <Form size="large" onSubmit={this.handleSubmit}>
             <Segment stacked>
