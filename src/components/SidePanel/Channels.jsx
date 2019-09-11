@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Form, Icon, Input, Menu, Modal } from 'semantic-ui-react';
+import { Button, Form, Icon, Input, Menu, Modal, Header } from 'semantic-ui-react';
 
 class Channels extends Component {
   state = {
     channels: [],
     channelName: '',
     channelDetails: '',
-    modalOpen: false
+    modalOpen: true
   };
 
   handleChange = evt => {
@@ -33,18 +33,23 @@ class Channels extends Component {
             <span>
               <Icon name="exchange" /> Channels ({channels.length})
             </span>
-            <span> </span>
-            <Icon name="add" onClick={this.handleOpenModal} />
+            <Icon
+              name="add"
+              style={{ cursor: 'pointer' }}
+              onClick={this.handleOpenModal}
+            />
           </Menu.Item>
         </Menu.Menu>
         <Modal basic open={modalOpen} onClose={this.handleCloseModal}>
-          <Modal.Header>Add a channel</Modal.Header>
+          <Header icon="chat" content="Add a channel"/>
           <Modal.Content>
             <Form>
               <Form.Field>
                 <Input
                   fluid
-                  label="Channel Name"
+                  placeholder="Please name the channel"
+                  label={{ tag: true, content: 'Name' }}
+                  labelPosition="right"
                   name="channelName"
                   onChange={this.handleChange}
                 />
@@ -52,7 +57,9 @@ class Channels extends Component {
               <Form.Field>
                 <Input
                   fluid
-                  label="Channel Description"
+                  placeholder="Enter a short description"
+                  label={{ tag: true, content: 'Details' }}
+                  labelPosition="right"
                   name="channelDetails"
                   onChange={this.handleChange}
                 />
