@@ -1,12 +1,62 @@
 import React, { Component } from 'react';
-import { Button, Form, Icon, Input, Menu, Modal, Header } from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import {
+  Button,
+  Form,
+  Header,
+  Icon,
+  Input,
+  Menu,
+  Modal
+} from 'semantic-ui-react';
+import firebase from '../../firebase/firebase';
 
 class Channels extends Component {
   state = {
     channels: [],
     channelName: '',
     channelDetails: '',
+    channelsRef: firebase.database().ref('channels'),
     modalOpen: true
+  };
+
+  addChannel = () => {
+    const { channelName, channelDetails, channelsRef } = this.state;
+    const { currentUser } = this.props;
+    const key = channelsRef.push().key;
+    const newChannel = {
+      id: key,
+      name: channelName,
+      details: channelDetails,
+      createdBy: {
+        name: currentUser.displayName,
+        avatar: currentUser.photoURL
+      }
+    };
+    channelsRef
+      .child(key)
+      .update(newChannel)
+      .then(
+        this.setState({
+          channelName: '',
+          channelDetails: '',
+          modalOpen: false
+        })
+      )
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  isFormValid = ({ channelName, channelDetails }) => {
+    return channelName.length > 2 && channelDetails.length > 2;
+  };
+
+  handleSubmit = evt => {
+    evt.preventDefault();
+    if (this.isFormValid(this.state)) {
+      this.addChannel();
+    }
   };
 
   handleChange = evt => {
@@ -24,7 +74,7 @@ class Channels extends Component {
   };
 
   render() {
-    const { channels, modalOpen } = this.state;
+    const { channels, channelName, channelDetails, modalOpen } = this.state;
 
     return (
       <>
@@ -41,9 +91,9 @@ class Channels extends Component {
           </Menu.Item>
         </Menu.Menu>
         <Modal basic open={modalOpen} onClose={this.handleCloseModal}>
-          <Header icon="chat" content="Add a channel"/>
+          <Header icon="chat" content="Add a channel" />
           <Modal.Content>
-            <Form>
+            <Form onSubmit={this.handleSubmit}>
               <Form.Field>
                 <Input
                   fluid
@@ -51,6 +101,7 @@ class Channels extends Component {
                   label={{ tag: true, content: 'Name' }}
                   labelPosition="right"
                   name="channelName"
+                  value={channelName}
                   onChange={this.handleChange}
                 />
               </Form.Field>
@@ -61,13 +112,14 @@ class Channels extends Component {
                   label={{ tag: true, content: 'Details' }}
                   labelPosition="right"
                   name="channelDetails"
+                  value={channelDetails}
                   onChange={this.handleChange}
                 />
               </Form.Field>
             </Form>
           </Modal.Content>
           <Modal.Actions>
-            <Button color="green" inverted>
+            <Button color="green" inverted onClick={this.handleSubmit}>
               <Icon name="checkmark" /> Add
             </Button>
             <Button color="red" inverted onClick={this.handleCloseModal}>
@@ -80,4 +132,8 @@ class Channels extends Component {
   }
 }
 
-export default Channels;
+const mapStateToProps = ({ user: { currentUser } }) => ({
+  currentUser
+});
+
+export default connect(mapStateToProps)(Channels);
