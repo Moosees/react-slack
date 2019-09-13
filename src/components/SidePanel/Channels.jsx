@@ -10,6 +10,7 @@ import {
   Modal
 } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
+import { setCurrentChannel } from '../../redux/actions';
 
 class Channels extends Component {
   state = {
@@ -40,6 +41,11 @@ class Channels extends Component {
 
   removeListeners = () => {};
 
+  changeChannel = channel => {
+    const { setCurrentChannel } = this.props;
+    setCurrentChannel(channel);
+  };
+
   displayChannels = channels =>
     channels.length &&
     channels.map(channel => (
@@ -47,7 +53,7 @@ class Channels extends Component {
         key={channel.id}
         name={channel.name}
         style={{ opacity: '0.7' }}
-        onClick={() => console.log(channel)}
+        onClick={() => this.changeChannel(channel)}
       >
         # {channel.name}
       </Menu.Item>
@@ -170,4 +176,7 @@ const mapStateToProps = ({ user: { currentUser } }) => ({
   currentUser
 });
 
-export default connect(mapStateToProps)(Channels);
+export default connect(
+  mapStateToProps,
+  { setCurrentChannel }
+)(Channels);
