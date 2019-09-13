@@ -17,8 +17,41 @@ class Channels extends Component {
     channelName: '',
     channelDetails: '',
     channelsRef: firebase.database().ref('channels'),
-    modalOpen: true
+    modalOpen: false
   };
+
+  componentDidMount() {
+    this.addListeners();
+  }
+
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
+  addListeners = () => {
+    const { channelsRef } = this.state;
+    let loadedChannels = [];
+
+    channelsRef.on('child_added', snapshot => {
+      loadedChannels.push(snapshot.val());
+      this.setState({ channels: loadedChannels });
+    });
+  };
+
+  removeListeners = () => {};
+
+  displayChannels = channels =>
+    channels.length &&
+    channels.map(channel => (
+      <Menu.Item
+        key={channel.id}
+        name={channel.name}
+        style={{ opacity: '0.7' }}
+        onClick={() => console.log(channel)}
+      >
+        # {channel.name}
+      </Menu.Item>
+    ));
 
   addChannel = () => {
     const { channelName, channelDetails, channelsRef } = this.state;
@@ -89,6 +122,7 @@ class Channels extends Component {
               onClick={this.handleOpenModal}
             />
           </Menu.Item>
+          {this.displayChannels(channels)}
         </Menu.Menu>
         <Modal basic open={modalOpen} onClose={this.handleCloseModal}>
           <Header icon="chat" content="Add a channel" />
