@@ -14,10 +14,12 @@ import { setCurrentChannel } from '../../redux/actions';
 
 class Channels extends Component {
   state = {
+    activeChannel: '',
     channels: [],
     channelName: '',
     channelDetails: '',
     channelsRef: firebase.database().ref('channels'),
+    firstLoad: true,
     modalOpen: false
   };
 
@@ -35,14 +37,27 @@ class Channels extends Component {
 
     channelsRef.on('child_added', snapshot => {
       loadedChannels.push(snapshot.val());
-      this.setState({ channels: loadedChannels });
+      this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
     });
   };
 
   removeListeners = () => {};
 
+  setFirstChannel = () => {
+    const { firstLoad, channels } = this.state;
+    if (firstLoad && channels.length) {
+      this.changeChannel(channels[0]);
+    }
+    this.setState({ firstLoad: false });
+  };
+
+  setActiveChannel = channel => {
+    this.setState({ activeChannel: channel.id });
+  };
+
   changeChannel = channel => {
     const { setCurrentChannel } = this.props;
+    this.setActiveChannel(channel);
     setCurrentChannel(channel);
   };
 
@@ -53,6 +68,7 @@ class Channels extends Component {
         key={channel.id}
         name={channel.name}
         style={{ opacity: '0.7' }}
+        active={channel.id === this.state.activeChannel}
         onClick={() => this.changeChannel(channel)}
       >
         # {channel.name}
