@@ -41,7 +41,10 @@ class Channels extends Component {
     });
   };
 
-  removeListeners = () => {};
+  removeListeners = () => {
+    const { channelsRef } = this.state;
+    channelsRef.off();
+  };
 
   setFirstChannel = () => {
     const { firstLoad, channels } = this.state;
