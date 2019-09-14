@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Segment, Form, Button, Input } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import { Button, Form, Input, Segment } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
 
 class MessageForm extends Component {
@@ -70,7 +70,7 @@ class MessageForm extends Component {
             name="message"
             value={message}
             style={{ marginBottom: '1em' }}
-            label={<Button icon="add" />}
+            label={<Button icon="add" type="submit" disabled={loading} />}
             labelPosition="left"
             placeholder="Write your message"
             className={
@@ -82,24 +82,21 @@ class MessageForm extends Component {
             }
             onChange={this.handleChange}
           />
-          <Button.Group icon widths="2">
-            <Button
-              disabled={loading}
-              color="orange"
-              content="Send Message"
-              labelPosition="left"
-              icon="edit"
-              type="submit"
-            />
-            <Button
-              disabled={loading}
-              color="teal"
-              content="Upload Media"
-              labelPosition="right"
-              icon="cloud upload"
-            />
-          </Button.Group>
         </Form>
+        <Button.Group icon widths="2">
+          <Button
+            color="orange"
+            content="Add Reply"
+            labelPosition="left"
+            icon="edit"
+          />
+          <Button
+            color="teal"
+            content="Upload Media"
+            labelPosition="right"
+            icon="cloud upload"
+          />
+        </Button.Group>
       </Segment>
     );
   }
