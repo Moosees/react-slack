@@ -23,3 +23,8 @@ body,
   right: 0.5em;
   z-index: 200;
 }
+
+.message--self {
+  border-left: 2px solid #ffa500;
+  padding-left: 8px;
+}

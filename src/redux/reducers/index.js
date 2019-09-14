@@ -7,7 +7,8 @@ const INITIAL_USER_STATE = {
 };
 
 const INITIAL_CHANNEL_STATE = {
-  currentChannel: null
+  currentChannel: null,
+  firstLoad: true
 };
 
 const user_reducer = (state = INITIAL_USER_STATE, action) => {
@@ -35,7 +36,8 @@ const channel_reducer = (state = INITIAL_CHANNEL_STATE, action) => {
     case actionTypes.SET_CURRENT_CHANNEL:
       return {
         ...state,
-        currentChannel: action.payload
+        currentChannel: action.payload,
+        firstLoad: false
       };
     default:
       return state;

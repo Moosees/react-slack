@@ -6,6 +6,7 @@ import firebase from '../../firebase/firebase';
 class MessageForm extends Component {
   state = {
     message: '',
+    messagesRef: firebase.database().ref('messages'),
     loading: false,
     errors: []
   };
@@ -33,8 +34,8 @@ class MessageForm extends Component {
   };
 
   sendMessage = () => {
-    const { messagesRef, currentChannel } = this.props;
-    const { message } = this.state;
+    const { currentChannel } = this.props;
+    const { message, messagesRef } = this.state;
 
     if (message) {
       this.setState({ loading: true });

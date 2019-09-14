@@ -19,7 +19,6 @@ class Channels extends Component {
     channelName: '',
     channelDetails: '',
     channelsRef: firebase.database().ref('channels'),
-    firstLoad: true,
     modalOpen: false
   };
 
@@ -47,11 +46,11 @@ class Channels extends Component {
   };
 
   setFirstChannel = () => {
-    const { firstLoad, channels } = this.state;
+    const { channels } = this.state;
+    const { firstLoad } = this.props;
     if (firstLoad && channels.length) {
       this.changeChannel(channels[0]);
     }
-    this.setState({ firstLoad: false });
   };
 
   setActiveChannel = channel => {
@@ -191,8 +190,12 @@ class Channels extends Component {
   }
 }
 
-const mapStateToProps = ({ user: { currentUser } }) => ({
-  currentUser
+const mapStateToProps = ({
+  user: { currentUser },
+  channel: { firstLoad }
+}) => ({
+  currentUser,
+  firstLoad
 });
 
 export default connect(
