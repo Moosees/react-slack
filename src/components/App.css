@@ -1,8 +1,25 @@
-#root,
+html,
+body,
+#root {
+  height: 100vh;
+}
+
 .app {
   background-color: #eee;
-  box-sizing: border-box;
   height: 100vh;
-  margin: 1rem;
-  padding: 0;
+  margin: 0 !important;
+}
+
+.messages {
+  height: 440px;
+  overflow-y: scroll;
+}
+
+.message-form {
+  bottom: 1em;
+  left: 0;
+  margin-left: 320px !important;
+  position: fixed !important;
+  right: 1em;
+  z-index: 200;
 }

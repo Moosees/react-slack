@@ -11,7 +11,7 @@ const App = () => {
     <Grid columns="equal" className="app">
       <ColorPanel />
       <SidePanel />
-      <Grid.Column style={{ marginLeft: '320' }}>
+      <Grid.Column style={{ marginLeft: '320px' }}>
         <Messages />
       </Grid.Column>
       <Grid.Column width={4}>
