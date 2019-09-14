@@ -34,7 +34,6 @@ class Root extends Component {
           history.push('/');
         } else {
           clearUser();
-          history.push('/login');
         }
       });
   }
@@ -44,12 +43,12 @@ class Root extends Component {
   }
 
   render() {
-    const { isLoading } = this.props;
+    const { isLoading, currentUser } = this.props;
     return isLoading ? (
-      <Spinner></Spinner>
+      <Spinner />
     ) : (
       <Switch>
-        <Route exact path="/" component={App} />
+        <Route exact path="/" component={currentUser ? App : Login} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
       </Switch>
@@ -57,7 +56,8 @@ class Root extends Component {
   }
 }
 
-const mapStateToProps = ({ user: { isLoading } }) => ({
+const mapStateToProps = ({ user: { currentUser, isLoading } }) => ({
+  currentUser,
   isLoading
 });
 

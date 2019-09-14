@@ -5,7 +5,12 @@ class MessageForm extends Component {
   render() {
     return (
       <Segment clearing>
-        <Header fuid as="h2" floated="left" style={{ marginBottom: '0' }}>
+        <Header
+          fuid="true"
+          as="h2"
+          floated="left"
+          style={{ marginBottom: '0' }}
+        >
           <span>
             Channel
             <Icon name="star outline" color="black" />

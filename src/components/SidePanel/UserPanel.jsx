@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { Dropdown, Grid, Header, Icon, Image } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase.js';
 
@@ -29,6 +30,7 @@ class UserPanel extends Component {
 
   handleSignOut = () => {
     firebase.auth().signOut();
+    this.props.history.push('/login');
   };
 
   render() {
@@ -64,4 +66,4 @@ const mapStateToProps = ({ user: { currentUser } }) => ({
   currentUser
 });
 
-export default connect(mapStateToProps)(UserPanel);
+export default withRouter(connect(mapStateToProps)(UserPanel));
