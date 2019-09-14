@@ -63,41 +63,36 @@ class MessageForm extends Component {
     const { message, loading, errors } = this.state;
 
     return (
-      <Segment className="message-form">
-        <Form onSubmit={this.sendMessage}>
-          <Input
-            fluid
-            name="message"
-            value={message}
-            style={{ marginBottom: '1em' }}
-            label={<Button icon="add" type="submit" disabled={loading} />}
-            labelPosition="left"
-            placeholder="Write your message"
-            className={
-              errors.some(error =>
-                error.message.toLowerCase().includes('message')
-              )
-                ? 'error'
-                : ''
-            }
-            onChange={this.handleChange}
-          />
-        </Form>
-        <Button.Group icon widths="2">
-          <Button
-            color="orange"
-            content="Add Reply"
-            labelPosition="left"
-            icon="edit"
-          />
+      <Segment.Group horizontal className="message-form">
+        <Segment>
+          <Form onSubmit={this.sendMessage}>
+            <Input
+              fluid
+              name="message"
+              value={message}
+              label={<Button icon="add" type="submit" disabled={loading} />}
+              labelPosition="left"
+              placeholder="Write your message"
+              className={
+                errors.some(error =>
+                  error.message.toLowerCase().includes('message')
+                )
+                  ? 'error'
+                  : ''
+              }
+              onChange={this.handleChange}
+            />
+          </Form>
+        </Segment>
+        <Segment style={{ flexGrow: '0' }}>
           <Button
             color="teal"
             content="Upload Media"
             labelPosition="right"
             icon="cloud upload"
           />
-        </Button.Group>
-      </Segment>
+        </Segment>
+      </Segment.Group>
     );
   }
 }

@@ -11,15 +11,15 @@ body,
 }
 
 .messages {
-  height: 440px;
+  height: calc(100vh - 235px);
   overflow-y: scroll;
 }
 
 .message-form {
-  bottom: 1em;
+  bottom: 0;
   left: 0;
   margin-left: 320px !important;
   position: fixed !important;
-  right: 1em;
+  right: 0.5em;
   z-index: 200;
 }
