@@ -5,17 +5,20 @@ import MessageForm from './MessageForm';
 import Messages from './Messages';
 import MessagesHeader from './MessagesHeader';
 
-const MessagesContainer = ({ firstLoad }) => {
+const MessagesContainer = ({ currentChannel, firstLoad }) => {
   return (
     <>
       <MessagesHeader />
-      <Segment>{firstLoad ? null : <Messages />}</Segment>
+      <Segment>
+        {firstLoad ? null : <Messages key={currentChannel.id} />}
+      </Segment>
       <MessageForm />
     </>
   );
 };
 
-const mapStateToProps = ({ channel: { firstLoad } }) => ({
+const mapStateToProps = ({ channel: { currentChannel, firstLoad } }) => ({
+  currentChannel,
   firstLoad
 });
 

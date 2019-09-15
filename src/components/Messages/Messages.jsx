@@ -45,7 +45,7 @@ class Messages extends Component {
     const { currentUser } = this.props;
 
     return (
-      messages.length &&
+      messages.length > 0 &&
       messages.map(message => (
         <Message key={message.timestamp} message={message} user={currentUser} />
       ))
