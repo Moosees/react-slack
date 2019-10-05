@@ -22,6 +22,11 @@ class MessageForm extends Component {
   openModal = () => this.setState({ modalOpen: true });
   closeModal = () => this.setState({ modalOpen: false });
 
+  uploadFile = (file, metadata) => {
+    console.log({ file });
+    console.log({ metadata });
+  };
+
   createMessage = () => {
     const { message } = this.state;
     const { currentUser } = this.props;
@@ -99,7 +104,11 @@ class MessageForm extends Component {
             onClick={this.openModal}
           />
         </Segment>
-        <FileModal modal={modalOpen} closeModal={this.closeModal} />
+        <FileModal
+          modal={modalOpen}
+          uploadFile={this.uploadFile}
+          closeModal={this.closeModal}
+        />
       </Segment.Group>
     );
   }
