@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Input, Segment } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
+import FileModal from './FileModal';
 
 class MessageForm extends Component {
   state = {
     message: '',
     messagesRef: firebase.database().ref('messages'),
+    modalOpen: false,
     loading: false,
     errors: []
   };
@@ -16,6 +18,9 @@ class MessageForm extends Component {
       [evt.target.name]: evt.target.value
     });
   };
+
+  openModal = () => this.setState({ modalOpen: true });
+  closeModal = () => this.setState({ modalOpen: false });
 
   createMessage = () => {
     const { message } = this.state;
@@ -61,7 +66,7 @@ class MessageForm extends Component {
   };
 
   render() {
-    const { message, loading, errors } = this.state;
+    const { message, modalOpen, loading, errors } = this.state;
 
     return (
       <Segment.Group horizontal className="message-form">
@@ -91,8 +96,10 @@ class MessageForm extends Component {
             content="Upload Media"
             labelPosition="right"
             icon="cloud upload"
+            onClick={this.openModal}
           />
         </Segment>
+        <FileModal modal={modalOpen} closeModal={this.closeModal} />
       </Segment.Group>
     );
   }
