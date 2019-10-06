@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Input, Segment } from 'semantic-ui-react';
+import uuidv4 from 'uuid/v4';
 import firebase from '../../firebase/firebase';
 import FileModal from './FileModal';
 
@@ -9,6 +10,10 @@ class MessageForm extends Component {
     message: '',
     messagesRef: firebase.database().ref('messages'),
     modalOpen: false,
+    percentUploaded: 0,
+    storageRef: firebase.storage().ref(),
+    uploadState: '',
+    uploadTask: null,
     loading: false,
     errors: []
   };
@@ -25,21 +30,86 @@ class MessageForm extends Component {
   uploadFile = (file, metadata) => {
     console.log({ file });
     console.log({ metadata });
+    const pathToUpload = this.props.currentChannel.id;
+    const ref = this.state.messagesRef;
+    const filePath = `chat/public/${uuidv4()}.jpg`;
+
+    this.setState(
+      {
+        uoloadState: 'uploading',
+        uploadTask: this.state.storageRef.child(filePath).put(file, metadata)
+      },
+      () => {
+        this.state.uploadTask.on(
+          'state_changed',
+          snapshot => {
+            const percentUploaded = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            console.log({ percentUploaded });
+            this.setState({ percentUploaded });
+          },
+          error => {
+            console.error(error);
+            this.setState({
+              uploadState: 'error',
+              uploadTask: null,
+              errors: this.state.errors.concat(error)
+            });
+          },
+          () => {
+            this.state.uploadTask.snapshot.ref
+              .getDownloadURL()
+              .then(downloadURL => {
+                this.sendFileMessage(downloadURL, ref, pathToUpload);
+              })
+              .catch(error => {
+                console.error(error);
+                this.setState({
+                  uploadState: 'error',
+                  uploadTask: null,
+                  errors: this.state.errors.concat(error)
+                });
+              });
+          }
+        );
+      }
+    );
   };
 
-  createMessage = () => {
+  sendFileMessage = (downloadURL, ref, pathToUpload) => {
+    ref
+      .child(pathToUpload)
+      .push()
+      .set(this.createMessage(downloadURL))
+      .then(() => {
+        this.setState({ uploadState: 'done' });
+      })
+      .catch(error => {
+        console.error(error);
+        this.setState({
+          errors: this.state.errors.concat(error)
+        });
+      });
+  };
+
+  createMessage = (downloadURL = null) => {
     const { message } = this.state;
     const { currentUser } = this.props;
 
     const createdMessage = {
       timestamp: firebase.database.ServerValue.TIMESTAMP,
-      content: message,
       user: {
         id: currentUser.uid,
         name: currentUser.displayName,
         avatar: currentUser.photoURL
       }
     };
+    if (downloadURL !== null) {
+      createdMessage['image'] = downloadURL;
+    } else {
+      createdMessage['content'] = message;
+    }
     return createdMessage;
   };
 
