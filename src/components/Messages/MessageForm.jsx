@@ -13,7 +13,7 @@ class MessageForm extends Component {
     modalOpen: false,
     percentUploaded: 0,
     storageRef: firebase.storage().ref(),
-    uploadState: '',
+    uploadState: 'done',
     uploadTask: null,
     loading: false,
     errors: []
@@ -35,7 +35,7 @@ class MessageForm extends Component {
 
     this.setState(
       {
-        uoloadState: 'uploading',
+        uploadState: 'uploading',
         uploadTask: this.state.storageRef.child(filePath).put(file, metadata)
       },
       () => {
@@ -45,9 +45,7 @@ class MessageForm extends Component {
             const percentUploaded = Math.round(
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             );
-            this.setState({ percentUploaded }, () =>
-              console.log({ uploaded: this.state.percentUploaded })
-            );
+            this.setState({ percentUploaded });
           },
           error => {
             console.error(error);
@@ -177,6 +175,7 @@ class MessageForm extends Component {
         >
           <Button
             style={{ minWidth: '12em', minHeight: '3em' }}
+            disabled={uploadState === 'uploading'}
             color="teal"
             content={
               percentUploaded ? (
