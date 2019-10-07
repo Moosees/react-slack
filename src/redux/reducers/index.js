@@ -8,7 +8,8 @@ const INITIAL_USER_STATE = {
 
 const INITIAL_CHANNEL_STATE = {
   currentChannel: null,
-  firstLoad: true
+  firstLoad: true,
+  numUniqueUsers: 0
 };
 
 const user_reducer = (state = INITIAL_USER_STATE, action) => {
@@ -39,6 +40,13 @@ const channel_reducer = (state = INITIAL_CHANNEL_STATE, action) => {
         currentChannel: action.payload,
         firstLoad: false
       };
+
+    case actionTypes.SET_NUM_UNIQUE_USERS:
+      return {
+        ...state,
+        numUniqueUsers: action.payload
+      };
+
     default:
       return state;
   }

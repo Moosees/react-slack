@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Comment } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
+import { setNumUniqueUsers } from '../../redux/actions';
 import Message from './Message';
 
 class Messages extends Component {
@@ -29,16 +30,34 @@ class Messages extends Component {
 
   addMessageListener = channelId => {
     const { messagesRef } = this.state;
+    const { setNumUniqueUsers } = this.props;
+
     let loadedMessages = [];
+
     messagesRef.child(channelId).on('child_added', snapshot => {
       loadedMessages.push(snapshot.val());
-      this.setState({ messages: loadedMessages, messagesLoading: false });
+      setNumUniqueUsers(this.countUniqueUsers(loadedMessages));
+      this.setState({
+        messages: loadedMessages,
+        messagesLoading: false
+      });
     });
   };
 
   removeListeners = channelId => {
+    // FIX FIX FIX
     const { messagesRef } = this.state;
     messagesRef.child(channelId).off();
+  };
+
+  countUniqueUsers = messages => {
+    const uniqueUsers = messages.reduce((acc, message) => {
+      if (!acc.includes(message.user.name)) {
+        acc.push(message.user.name);
+      }
+      return acc;
+    }, []);
+    return uniqueUsers.length;
   };
 
   displayMessages = messages => {
@@ -71,4 +90,7 @@ const mapStateToProps = ({
   currentUser
 });
 
-export default connect(mapStateToProps)(Messages);
+export default connect(
+  mapStateToProps,
+  { setNumUniqueUsers }
+)(Messages);

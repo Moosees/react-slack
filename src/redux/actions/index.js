@@ -21,3 +21,10 @@ export const setCurrentChannel = channel => {
     payload: channel
   };
 };
+
+export const setNumUniqueUsers = numUniqueUsers => {
+  return {
+    type: actionTypes.SET_NUM_UNIQUE_USERS,
+    payload: numUniqueUsers
+  };
+};
