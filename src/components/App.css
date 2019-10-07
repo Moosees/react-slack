@@ -32,3 +32,8 @@ body,
 .message__image {
   padding: 1em;
 }
+
+.progress-bar {
+  font-size: 0.8rem !important;
+  margin: 0 !important;
+}

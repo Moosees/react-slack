@@ -4,6 +4,7 @@ import { Button, Form, Input, Segment } from 'semantic-ui-react';
 import uuidv4 from 'uuid/v4';
 import firebase from '../../firebase/firebase';
 import FileModal from './FileModal';
+import ProgressBar from './ProgressBar';
 
 class MessageForm extends Component {
   state = {
@@ -28,8 +29,6 @@ class MessageForm extends Component {
   closeModal = () => this.setState({ modalOpen: false });
 
   uploadFile = (file, metadata) => {
-    console.log({ file });
-    console.log({ metadata });
     const pathToUpload = this.props.currentChannel.id;
     const ref = this.state.messagesRef;
     const filePath = `chat/public/${uuidv4()}.jpg`;
@@ -46,8 +45,9 @@ class MessageForm extends Component {
             const percentUploaded = Math.round(
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             );
-            console.log({ percentUploaded });
-            this.setState({ percentUploaded });
+            this.setState({ percentUploaded }, () =>
+              console.log({ uploaded: this.state.percentUploaded })
+            );
           },
           error => {
             console.error(error);
@@ -83,7 +83,7 @@ class MessageForm extends Component {
       .push()
       .set(this.createMessage(downloadURL))
       .then(() => {
-        this.setState({ uploadState: 'done' });
+        this.setState({ uploadState: 'done', percentUploaded: 0 });
       })
       .catch(error => {
         console.error(error);
@@ -141,7 +141,14 @@ class MessageForm extends Component {
   };
 
   render() {
-    const { message, modalOpen, loading, errors } = this.state;
+    const {
+      message,
+      modalOpen,
+      percentUploaded,
+      uploadState,
+      loading,
+      errors
+    } = this.state;
 
     return (
       <Segment.Group horizontal className="message-form">
@@ -165,10 +172,19 @@ class MessageForm extends Component {
             />
           </Form>
         </Segment>
-        <Segment style={{ flexGrow: '0' }}>
+        <Segment
+          style={{ flexGrow: '0', padding: '0 1em', alignSelf: 'center' }}
+        >
           <Button
+            style={{ minWidth: '12em', minHeight: '3em' }}
             color="teal"
-            content="Upload Media"
+            content={
+              percentUploaded ? (
+                <ProgressBar percentUploaded={percentUploaded} />
+              ) : (
+                'Upload Media'
+              )
+            }
             labelPosition="right"
             icon="cloud upload"
             onClick={this.openModal}
