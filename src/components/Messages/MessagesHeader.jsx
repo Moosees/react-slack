@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Header, Icon, Input, Segment } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import { Header, Icon, Input, Segment } from 'semantic-ui-react';
+import { setSearchTerm } from '../../redux/actions';
 
 class MessageForm extends Component {
   displayChannelName = () =>
@@ -10,6 +11,10 @@ class MessageForm extends Component {
     const { numUniqueUsers } = this.props;
     const plural = !numUniqueUsers === 1;
     return `${numUniqueUsers} user${plural ? 's' : ''} is here`;
+  };
+
+  handleSearch = evt => {
+    this.props.setSearchTerm(evt.target.value);
   };
 
   render() {
@@ -33,6 +38,8 @@ class MessageForm extends Component {
             icon="search"
             name="searchTerm"
             placeholder="Search Messages"
+            value={this.props.searchTerm}
+            onChange={this.handleSearch}
           />
         </Header>
       </Segment>
@@ -40,9 +47,16 @@ class MessageForm extends Component {
   }
 }
 
-const mapStateToProps = ({ channel: { currentChannel, numUniqueUsers } }) => ({
+const mapStateToProps = ({
+  channel: { currentChannel, numUniqueUsers },
+  search: { searchTerm }
+}) => ({
   currentChannel,
-  numUniqueUsers
+  numUniqueUsers,
+  searchTerm
 });
 
-export default connect(mapStateToProps)(MessageForm);
+export default connect(
+  mapStateToProps,
+  { setSearchTerm }
+)(MessageForm);

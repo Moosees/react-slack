@@ -28,3 +28,11 @@ export const setNumUniqueUsers = numUniqueUsers => {
     payload: numUniqueUsers
   };
 };
+
+// Search Action
+export const setSearchTerm = searchTerm => {
+  return {
+    type: actionTypes.SET_SEARCH_TERM,
+    payload: searchTerm
+  };
+};

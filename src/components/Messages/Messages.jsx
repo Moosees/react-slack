@@ -60,9 +60,7 @@ class Messages extends Component {
     return uniqueUsers.length;
   };
 
-  displayMessages = messages => {
-    const { currentUser } = this.props;
-
+  displayMessages = (messages, currentUser) => {
     return (
       messages.length > 0 &&
       messages.map(message => (
@@ -71,12 +69,34 @@ class Messages extends Component {
     );
   };
 
+  displaySearch = (messages, currentUser, searchTerm) => {
+    const channelMessages = [...messages];
+    const regex = new RegExp(searchTerm, 'gi');
+
+    const searchResults = channelMessages.reduce((acc, message) => {
+      if (
+        (message.content && message.content.match(regex)) ||
+        message.user.name.match(regex)
+      ) {
+        acc.push(message);
+      }
+      return acc;
+    }, []);
+
+    return searchResults.map(message => (
+      <Message key={message.timestamp} message={message} user={currentUser} />
+    ));
+  };
+
   render() {
     const { messages } = this.state;
+    const { currentUser, searchTerm } = this.props;
 
     return (
       <Comment.Group className="messages">
-        {this.displayMessages(messages)}
+        {searchTerm
+          ? this.displaySearch(messages, currentUser, searchTerm)
+          : this.displayMessages(messages, currentUser)}
       </Comment.Group>
     );
   }
@@ -84,10 +104,12 @@ class Messages extends Component {
 
 const mapStateToProps = ({
   channel: { currentChannel },
-  user: { currentUser }
+  user: { currentUser },
+  search: { searchTerm }
 }) => ({
   currentChannel,
-  currentUser
+  currentUser,
+  searchTerm,
 });
 
 export default connect(

@@ -52,9 +52,23 @@ const channel_reducer = (state = INITIAL_CHANNEL_STATE, action) => {
   }
 };
 
+const search_reducer = (state = { searchTerm: '' }, action) => {
+  switch (action.type) {
+    case actionTypes.SET_SEARCH_TERM:
+      return {
+        ...state,
+        searchTerm: action.payload
+      };
+
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
   user: user_reducer,
-  channel: channel_reducer
+  channel: channel_reducer,
+  search: search_reducer
 });
 
 export default rootReducer;
