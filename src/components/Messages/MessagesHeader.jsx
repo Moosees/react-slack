@@ -4,13 +4,17 @@ import { Header, Icon, Input, Segment } from 'semantic-ui-react';
 import { setSearchTerm } from '../../redux/actions';
 
 class MessageForm extends Component {
-  displayChannelName = () =>
-    this.props.currentChannel ? `#${this.props.currentChannel.name}` : '';
+  displayChannelName = () => {
+    const { currentChannel, isPrivateChannel } = this.props;
+    return currentChannel
+      ? `${isPrivateChannel ? '@' : '#'}${currentChannel.name}`
+      : '';
+  };
 
   displayNumUsers = () => {
     const { numUniqueUsers } = this.props;
-    const plural = !numUniqueUsers === 1;
-    return `${numUniqueUsers} user${plural ? 's' : ''} is here`;
+    const plural = !(numUniqueUsers === 1);
+    return `${numUniqueUsers} user${plural ? 's' : ''}`;
   };
 
   handleSearch = evt => {
@@ -18,6 +22,8 @@ class MessageForm extends Component {
   };
 
   render() {
+    const { isPrivateChannel, searchTerm } = this.props;
+
     return (
       <Segment clearing>
         <Header
@@ -28,7 +34,9 @@ class MessageForm extends Component {
         >
           <span>
             {this.displayChannelName()}{' '}
-            <Icon name="star outline" color="black" />
+            {!isPrivateChannel ? (
+              <Icon name="star outline" color="black" />
+            ) : null}
           </span>
           <Header.Subheader>{this.displayNumUsers()}</Header.Subheader>
         </Header>
@@ -38,7 +46,7 @@ class MessageForm extends Component {
             icon="search"
             name="searchTerm"
             placeholder="Search Messages"
-            value={this.props.searchTerm}
+            value={searchTerm}
             onChange={this.handleSearch}
           />
         </Header>
@@ -48,10 +56,11 @@ class MessageForm extends Component {
 }
 
 const mapStateToProps = ({
-  channel: { currentChannel, numUniqueUsers },
+  channel: { currentChannel, isPrivateChannel, numUniqueUsers },
   search: { searchTerm }
 }) => ({
   currentChannel,
+  isPrivateChannel,
   numUniqueUsers,
   searchTerm
 });
