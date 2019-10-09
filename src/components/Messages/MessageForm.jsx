@@ -10,6 +10,7 @@ class MessageForm extends Component {
   state = {
     message: '',
     messagesRef: firebase.database().ref('messages'),
+    privateMessagesRef: firebase.database().ref('privateMessages'),
     modalOpen: false,
     percentUploaded: 0,
     storageRef: firebase.storage().ref(),
@@ -30,8 +31,8 @@ class MessageForm extends Component {
 
   uploadFile = (file, metadata) => {
     const pathToUpload = this.props.currentChannel.id;
-    const ref = this.state.messagesRef;
-    const filePath = `chat/public/${uuidv4()}.jpg`;
+    const ref = this.getMessagesRef();
+    const filePath = `${this.getPath()}/${uuidv4()}.jpg`;
 
     this.setState(
       {
@@ -75,6 +76,20 @@ class MessageForm extends Component {
     );
   };
 
+  // change to redux?
+  getMessagesRef = () => {
+    return this.props.isPrivateChannel
+      ? this.state.privateMessagesRef
+      : this.state.messagesRef;
+  };
+
+  getPath = () => {
+    const { currentChannel, isPrivateChannel } = this.props;
+    return isPrivateChannel
+      ? `chat/private-${currentChannel.id}`
+      : 'chat/public';
+  };
+
   sendFileMessage = (downloadURL, ref, pathToUpload) => {
     ref
       .child(pathToUpload)
@@ -113,11 +128,12 @@ class MessageForm extends Component {
 
   sendMessage = () => {
     const { currentChannel } = this.props;
-    const { message, messagesRef } = this.state;
+    const { message } = this.state;
+    const ref = this.getMessagesRef();
 
     if (message) {
       this.setState({ loading: true });
-      messagesRef
+      ref
         .child(currentChannel.id)
         .push()
         .set(this.createMessage())
@@ -200,10 +216,11 @@ class MessageForm extends Component {
 }
 
 const mapStateToProps = ({
-  channel: { currentChannel },
+  channel: { currentChannel, isPrivateChannel },
   user: { currentUser }
 }) => ({
   currentChannel,
+  isPrivateChannel,
   currentUser
 });
 

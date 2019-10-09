@@ -38,14 +38,9 @@ const channel_reducer = (state = INITIAL_CHANNEL_STATE, action) => {
     case actionTypes.SET_CURRENT_CHANNEL:
       return {
         ...state,
-        currentChannel: action.payload,
+        currentChannel: action.payload.channel,
+        isPrivateChannel: action.payload.isPrivate,
         firstLoad: false
-      };
-
-    case actionTypes.SET_PRIVATE_CHANNEL:
-      return {
-        ...state,
-        isPrivateChannel: action.payload
       };
 
     case actionTypes.SET_NUM_UNIQUE_USERS:

@@ -8,6 +8,7 @@ import Message from './Message';
 class Messages extends Component {
   state = {
     messagesRef: firebase.database().ref('messages'),
+    privateMessagesRef: firebase.database().ref('privateMessages'),
     messages: [],
     messagesLoading: true
   };
@@ -29,12 +30,12 @@ class Messages extends Component {
   };
 
   addMessageListener = channelId => {
-    const { messagesRef } = this.state;
+    const ref = this.getMessagesRef();
     const { setNumUniqueUsers } = this.props;
 
     let loadedMessages = [];
 
-    messagesRef.child(channelId).on('child_added', snapshot => {
+    ref.child(channelId).on('child_added', snapshot => {
       loadedMessages.push(snapshot.val());
       setNumUniqueUsers(this.countUniqueUsers(loadedMessages));
       this.setState({
@@ -46,8 +47,15 @@ class Messages extends Component {
 
   removeListeners = channelId => {
     // FIX FIX FIX
-    const { messagesRef } = this.state;
-    messagesRef.child(channelId).off();
+    const ref = this.getMessagesRef();
+    ref.child(channelId).off();
+  };
+
+  // change to redux?
+  getMessagesRef = () => {
+    return this.props.isPrivateChannel
+      ? this.state.privateMessagesRef
+      : this.state.messagesRef;
   };
 
   countUniqueUsers = messages => {
@@ -103,13 +111,14 @@ class Messages extends Component {
 }
 
 const mapStateToProps = ({
-  channel: { currentChannel },
+  channel: { currentChannel, isPrivateChannel },
   user: { currentUser },
   search: { searchTerm }
 }) => ({
   currentChannel,
+  isPrivateChannel,
   currentUser,
-  searchTerm,
+  searchTerm
 });
 
 export default connect(
