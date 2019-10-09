@@ -22,6 +22,13 @@ export const setCurrentChannel = channel => {
   };
 };
 
+export const setPrivateChannel = isPrivate => {
+  return {
+    type: actionTypes.SET_PRIVATE_CHANNEL,
+    payload: isPrivate
+  };
+};
+
 export const setNumUniqueUsers = numUniqueUsers => {
   return {
     type: actionTypes.SET_NUM_UNIQUE_USERS,

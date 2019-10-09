@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 // prettier-ignore
 import { Button, Form, Header, Icon, Input, Menu, Modal } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
-import { setCurrentChannel } from '../../redux/actions';
+import { setCurrentChannel, setPrivateChannel } from '../../redux/actions';
 
 class Channels extends Component {
   state = {
@@ -51,9 +51,10 @@ class Channels extends Component {
   };
 
   changeChannel = channel => {
-    const { setCurrentChannel } = this.props;
+    const { setCurrentChannel, setPrivateChannel } = this.props;
     this.setActiveChannel(channel);
     setCurrentChannel(channel);
+    setPrivateChannel(false);
   };
 
   displayChannels = channels =>
@@ -193,5 +194,5 @@ const mapStateToProps = ({
 
 export default connect(
   mapStateToProps,
-  { setCurrentChannel }
+  { setCurrentChannel, setPrivateChannel }
 )(Channels);
