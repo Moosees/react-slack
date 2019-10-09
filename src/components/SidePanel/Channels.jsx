@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-  Button,
-  Form,
-  Header,
-  Icon,
-  Input,
-  Menu,
-  Modal
-} from 'semantic-ui-react';
+// prettier-ignore
+import { Button, Form, Header, Icon, Input, Menu, Modal } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
 import { setCurrentChannel } from '../../redux/actions';
 
@@ -135,7 +128,7 @@ class Channels extends Component {
 
     return (
       <>
-        <Menu.Menu style={{ paddingBottom: '2em' }}>
+        <Menu.Menu className="menu">
           <Menu.Item>
             <span>
               <Icon name="exchange" /> Channels ({channels.length})
