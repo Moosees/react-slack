@@ -85,6 +85,7 @@ class DirectMessages extends Component {
 
   render() {
     const { users } = this.state;
+    const { currentChannel } = this.props;
 
     return (
       <Menu.Menu className="menu">
@@ -98,6 +99,7 @@ class DirectMessages extends Component {
           <Menu.Item
             key={user.uid}
             onClick={() => this.changeToUserChannel(user)}
+            active={currentChannel.id.includes(user.uid)}
             style={{ opacity: '0.7', fontStyle: 'italic' }}
           >
             <Icon
@@ -112,7 +114,11 @@ class DirectMessages extends Component {
   }
 }
 
-const mapStateToProps = ({ user: { currentUser } }) => ({
+const mapStateToProps = ({
+  channel: { currentChannel },
+  user: { currentUser }
+}) => ({
+  currentChannel,
   currentUser
 });
 

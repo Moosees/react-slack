@@ -7,7 +7,15 @@ const INITIAL_USER_STATE = {
 };
 
 const INITIAL_CHANNEL_STATE = {
-  currentChannel: null,
+  currentChannel: {
+    id: '',
+    name: '',
+    details: '',
+    createdBy: {
+      name: '',
+      avatar: ''
+    }
+  },
   isPrivateChannel: false,
   firstLoad: true,
   numUniqueUsers: 0

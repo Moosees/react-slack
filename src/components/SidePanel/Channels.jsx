@@ -7,7 +7,6 @@ import { setCurrentChannel } from '../../redux/actions';
 
 class Channels extends Component {
   state = {
-    activeChannel: '',
     channels: [],
     channelName: '',
     channelDetails: '',
@@ -46,13 +45,8 @@ class Channels extends Component {
     }
   };
 
-  setActiveChannel = channel => {
-    this.setState({ activeChannel: channel.id });
-  };
-
   changeChannel = channel => {
     const { setCurrentChannel } = this.props;
-    this.setActiveChannel(channel);
     setCurrentChannel(channel, false);
   };
 
@@ -63,7 +57,7 @@ class Channels extends Component {
         key={channel.id}
         name={channel.name}
         style={{ opacity: '0.7' }}
-        active={channel.id === this.state.activeChannel}
+        active={channel.id === this.props.currentChannel.id}
         onClick={() => this.changeChannel(channel)}
       >
         # {channel.name}
@@ -185,9 +179,10 @@ class Channels extends Component {
 
 const mapStateToProps = ({
   user: { currentUser },
-  channel: { firstLoad }
+  channel: { currentChannel, firstLoad }
 }) => ({
   currentUser,
+  currentChannel,
   firstLoad
 });
 
