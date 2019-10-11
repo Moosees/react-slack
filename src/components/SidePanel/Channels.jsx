@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// prettier-ignore
-import { Button, Form, Header, Icon, Input, Label, Menu, Modal } from 'semantic-ui-react';
+import { Icon, Label, Menu } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
 import { setCurrentChannel } from '../../redux/actions';
+import AddChannel from './AddChannel';
 
 class Channels extends Component {
   state = {
     channel: null,
     channels: [],
-    channelName: '',
-    channelDetails: '',
     channelsRef: firebase.database().ref('channels'),
     messagesRef: firebase.database().ref('messages'),
-    modalOpen: false,
     notifications: []
   };
 
@@ -155,61 +152,8 @@ class Channels extends Component {
     return count > 0 ? <Label color="red">{count}</Label> : null;
   };
 
-  addChannel = () => {
-    const { channelName, channelDetails, channelsRef } = this.state;
-    const { currentUser } = this.props;
-    const key = channelsRef.push().key;
-    const newChannel = {
-      id: key,
-      name: channelName,
-      details: channelDetails,
-      createdBy: {
-        name: currentUser.displayName,
-        avatar: currentUser.photoURL
-      }
-    };
-    channelsRef
-      .child(key)
-      .update(newChannel)
-      .then(
-        this.setState({
-          channelName: '',
-          channelDetails: '',
-          modalOpen: false
-        })
-      )
-      .catch(error => {
-        console.error(error);
-      });
-  };
-
-  isFormValid = ({ channelName, channelDetails }) => {
-    return channelName.length > 2 && channelDetails.length > 2;
-  };
-
-  handleSubmit = evt => {
-    evt.preventDefault();
-    if (this.isFormValid(this.state)) {
-      this.addChannel();
-    }
-  };
-
-  handleChange = evt => {
-    this.setState({
-      [evt.target.name]: evt.target.value
-    });
-  };
-
-  handleOpenModal = () => {
-    this.setState({ modalOpen: true });
-  };
-
-  handleCloseModal = () => {
-    this.setState({ modalOpen: false });
-  };
-
   render() {
-    const { channels, channelName, channelDetails, modalOpen } = this.state;
+    const { channels } = this.state;
 
     return (
       <>
@@ -218,61 +162,16 @@ class Channels extends Component {
             <span>
               <Icon name="exchange" /> Channels ({channels.length})
             </span>
-            <Icon
-              name="add"
-              style={{ cursor: 'pointer' }}
-              onClick={this.handleOpenModal}
-            />
+            <AddChannel addChannel={this.addChannel} />
           </Menu.Item>
           {this.displayChannels(channels)}
         </Menu.Menu>
-        <Modal basic open={modalOpen} onClose={this.handleCloseModal}>
-          <Header icon="chat" content="Add a channel" />
-          <Modal.Content>
-            <Form onSubmit={this.handleSubmit}>
-              <Form.Field>
-                <Input
-                  fluid
-                  placeholder="Please name the channel"
-                  label={{ tag: true, content: 'Name' }}
-                  labelPosition="right"
-                  name="channelName"
-                  value={channelName}
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
-              <Form.Field>
-                <Input
-                  fluid
-                  placeholder="Enter a short description"
-                  label={{ tag: true, content: 'Details' }}
-                  labelPosition="right"
-                  name="channelDetails"
-                  value={channelDetails}
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
-            </Form>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button color="green" inverted onClick={this.handleSubmit}>
-              <Icon name="checkmark" /> Add
-            </Button>
-            <Button color="red" inverted onClick={this.handleCloseModal}>
-              <Icon name="remove" /> Cancel
-            </Button>
-          </Modal.Actions>
-        </Modal>
       </>
     );
   }
 }
 
-const mapStateToProps = ({
-  user: { currentUser },
-  channel: { currentChannel, firstLoad }
-}) => ({
-  currentUser,
+const mapStateToProps = ({ channel: { currentChannel, firstLoad } }) => ({
   currentChannel,
   firstLoad
 });
