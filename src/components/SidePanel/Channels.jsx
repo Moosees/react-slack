@@ -123,7 +123,7 @@ class Channels extends Component {
 
   displayChannels = channels => {
     return (
-      channels.length &&
+      channels.length > 0 &&
       channels.map(channel => (
         <Menu.Item
           key={channel.id}
