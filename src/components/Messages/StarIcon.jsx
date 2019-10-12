@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon } from 'semantic-ui-react';
 import { setChannelStar } from '../../redux/actions';
-import firebase from 'firebase';
+import firebase from '../../firebase/firebase';
 
 class StarIcon extends Component {
   state = {

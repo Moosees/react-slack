@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Dropdown, Grid, Header, Icon, Image } from 'semantic-ui-react';
-import firebase from '../../firebase/firebase.js';
+import firebase from '../../firebase/firebase';
 
 class UserPanel extends Component {
   dropdownOptions = () => {

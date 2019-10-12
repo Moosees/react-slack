@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Button,
-  Form,
-  Grid,
-  GridColumn,
-  Header,
-  Icon,
-  Message,
-  Segment
-} from 'semantic-ui-react';
+// prettier-ignore
+import { Button, Form, Grid, GridColumn, Header, Icon, Message, Segment } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
 
 class Login extends Component {

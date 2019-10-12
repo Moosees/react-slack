@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from '../../firebase/firebase';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Header, Icon, Input, Modal } from 'semantic-ui-react';
