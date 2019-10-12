@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Header, Icon, Input, Segment } from 'semantic-ui-react';
+import { Header, Input, Segment } from 'semantic-ui-react';
 import { setSearchTerm } from '../../redux/actions';
+import StarIcon from './StarIcon';
 
-class MessageForm extends Component {
+class MessageHeader extends Component {
   displayChannelName = () => {
     const { currentChannel, isPrivateChannel } = this.props;
     return currentChannel
@@ -22,7 +23,7 @@ class MessageForm extends Component {
   };
 
   render() {
-    const { isPrivateChannel, searchTerm } = this.props;
+    const { currentChannel, isPrivateChannel, searchTerm } = this.props;
 
     return (
       <Segment clearing>
@@ -34,9 +35,7 @@ class MessageForm extends Component {
         >
           <span>
             {this.displayChannelName()}{' '}
-            {!isPrivateChannel ? (
-              <Icon name="star outline" color="black" />
-            ) : null}
+            {!isPrivateChannel && <StarIcon key={currentChannel.id} />}
           </span>
           <Header.Subheader>{this.displayNumUsers()}</Header.Subheader>
         </Header>
@@ -68,4 +67,4 @@ const mapStateToProps = ({
 export default connect(
   mapStateToProps,
   { setSearchTerm }
-)(MessageForm);
+)(MessageHeader);

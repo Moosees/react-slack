@@ -17,6 +17,7 @@ const INITIAL_CHANNEL_STATE = {
     }
   },
   isPrivateChannel: false,
+  isChannelStarred: false,
   firstLoad: true,
   numUniqueUsers: 0
 };
@@ -55,6 +56,12 @@ const channel_reducer = (state = INITIAL_CHANNEL_STATE, action) => {
       return {
         ...state,
         numUniqueUsers: action.payload
+      };
+
+    case actionTypes.SET_CHANNEL_STAR:
+      return {
+        ...state,
+        isChannelStarred: action.payload
       };
 
     default:

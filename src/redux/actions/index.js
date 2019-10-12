@@ -29,6 +29,13 @@ export const setNumUniqueUsers = numUniqueUsers => {
   };
 };
 
+export const setChannelStar = isChannelStarred => {
+  return {
+    type: actionTypes.SET_CHANNEL_STAR,
+    payload: isChannelStarred
+  };
+};
+
 // Search Action
 export const setSearchTerm = searchTerm => {
   return {
