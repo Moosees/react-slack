@@ -1,7 +1,7 @@
 import React from 'react';
 import { Progress } from 'semantic-ui-react';
 
-const ProgressBar = ({ uploadState, percentUploaded }) => (
+const ProgressBar = ({ percentUploaded }) => (
   <Progress
     progress
     indicating

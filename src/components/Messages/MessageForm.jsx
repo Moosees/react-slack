@@ -76,7 +76,6 @@ class MessageForm extends Component {
     );
   };
 
-  // change to redux?
   getMessagesRef = () => {
     return this.props.isPrivateChannel
       ? this.state.privateMessagesRef

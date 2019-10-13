@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon } from 'semantic-ui-react';
-import { setChannelStar } from '../../redux/actions';
 import firebase from '../../firebase/firebase';
+import { setChannelStar } from '../../redux/actions';
 
 class StarIcon extends Component {
   state = {
-    usersRef: firebase.database().ref('users')
+    usersRef: firebase.database().ref('users'),
+    isLoading: false
   };
 
   componentDidMount() {
@@ -25,11 +26,7 @@ class StarIcon extends Component {
       .child('starred')
       .child(channelId)
       .once('value', snapshot => {
-        if (snapshot.exists()) {
-          setChannelStar(true);
-        } else {
-          setChannelStar(false);
-        }
+        setChannelStar(snapshot.exists());
       });
   };
 
@@ -41,35 +38,53 @@ class StarIcon extends Component {
       isChannelStarred,
       setChannelStar
     } = this.props;
-    if (!isChannelStarred) {
-      usersRef
-        .child(`${currentUser.uid}/starred`)
-        .update({
-          [currentChannel.id]: {
-            ...currentChannel
-          }
-        })
-        .then(() => setChannelStar(true));
-    } else {
-      usersRef
-        .child(`${currentUser.uid}/starred`)
-        .child(currentChannel.id)
-        .remove(error => {
-          if (error !== null) {
-            console.error(error);
-          }
-        })
-        .then(() => setChannelStar(false));
-    }
+
+    this.setState({ isLoading: true }, () => {
+      if (!isChannelStarred) {
+        usersRef
+          .child(`${currentUser.uid}/starred`)
+          .update({
+            [currentChannel.id]: {
+              ...currentChannel
+            }
+          })
+          .then(() => {
+            setChannelStar(true);
+            this.setState({ isLoading: false });
+          });
+      } else {
+        usersRef
+          .child(`${currentUser.uid}/starred`)
+          .child(currentChannel.id)
+          .remove(error => {
+            if (error !== null) {
+              console.error(error);
+            }
+          })
+          .then(() => {
+            setChannelStar(false);
+            this.setState({ isLoading: false });
+          });
+      }
+    });
   };
 
   render() {
     const { isChannelStarred } = this.props;
+    const { isLoading } = this.state;
 
     return (
       <Icon
-        name={isChannelStarred ? 'star' : 'star outline'}
-        color={isChannelStarred ? 'yellow' : 'black'}
+        style={{ cursor: 'pointer' }}
+        aria-label="Toggle favorite channel"
+        name={
+          isLoading
+            ? 'star half full'
+            : isChannelStarred
+            ? 'star'
+            : 'star outline'
+        }
+        color={isChannelStarred || isLoading ? 'yellow' : 'black'}
         onClick={this.handleStar}
       />
     );

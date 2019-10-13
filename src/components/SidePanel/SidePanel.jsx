@@ -13,7 +13,7 @@ class SidePanel extends Component {
         inverted
         vertical
         fixed="left"
-        style={{ backgroundColor: '#4c3c4c', fontSize: '1.2rem' }}
+        className="side-panel"
       >
         <UserPanel />
         <Starred />

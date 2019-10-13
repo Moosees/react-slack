@@ -1,7 +1,7 @@
-import firebase from '../../firebase/firebase';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon, Menu } from 'semantic-ui-react';
+import firebase from '../../firebase/firebase';
 import { setCurrentChannel } from '../../redux/actions';
 
 class DirectMessages extends Component {
@@ -13,7 +13,7 @@ class DirectMessages extends Component {
   };
 
   componentDidMount() {
-    if (this.props.currentUser) {
+    if (this.props.currentUser.uid) {
       this.addListerners(this.props.currentUser.uid);
     }
   }

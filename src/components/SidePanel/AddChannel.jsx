@@ -1,7 +1,7 @@
-import firebase from '../../firebase/firebase';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Header, Icon, Input, Modal } from 'semantic-ui-react';
+import firebase from '../../firebase/firebase';
 
 class AddChannel extends Component {
   state = {
@@ -14,6 +14,7 @@ class AddChannel extends Component {
   addChannel = () => {
     const { channelsRef, channelName, channelDetails } = this.state;
     const { currentUser } = this.props;
+
     const key = channelsRef.push().key;
     const newChannel = {
       id: key,
@@ -56,13 +57,8 @@ class AddChannel extends Component {
     });
   };
 
-  handleOpenModal = () => {
-    this.setState({ modalOpen: true });
-  };
-
-  handleCloseModal = () => {
-    this.setState({ modalOpen: false });
-  };
+  openModal = () => this.setState({ modalOpen: true });
+  closeModal = () => this.setState({ modalOpen: false });
 
   render() {
     const { channelName, channelDetails, modalOpen } = this.state;
@@ -72,9 +68,9 @@ class AddChannel extends Component {
         <Icon
           name="add"
           style={{ cursor: 'pointer' }}
-          onClick={this.handleOpenModal}
+          onClick={this.openModal}
         />
-        <Modal basic open={modalOpen} onClose={this.handleCloseModal}>
+        <Modal basic open={modalOpen} onClose={this.closeModal}>
           <Header icon="chat" content="Add a channel" />
           <Modal.Content>
             <Form onSubmit={this.handleSubmit}>
@@ -106,7 +102,7 @@ class AddChannel extends Component {
             <Button color="green" inverted onClick={this.handleSubmit}>
               <Icon name="checkmark" /> Add
             </Button>
-            <Button color="red" inverted onClick={this.handleCloseModal}>
+            <Button color="red" inverted onClick={this.closeModal}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>

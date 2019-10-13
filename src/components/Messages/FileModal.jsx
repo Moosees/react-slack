@@ -19,8 +19,8 @@ class FileModal extends Component {
     if (file !== null && this.isAuthorized(file.name)) {
       const metadata = { contentType: mime.lookup(file.name) };
       uploadFile(file, metadata);
-      closeModal();
       this.clearFile();
+      closeModal();
     }
   };
 

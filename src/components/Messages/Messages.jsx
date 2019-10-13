@@ -46,12 +46,10 @@ class Messages extends Component {
   };
 
   removeListeners = channelId => {
-    // FIX FIX FIX
     const ref = this.getMessagesRef();
     ref.child(channelId).off();
   };
 
-  // change to redux?
   getMessagesRef = () => {
     return this.props.isPrivateChannel
       ? this.state.privateMessagesRef
