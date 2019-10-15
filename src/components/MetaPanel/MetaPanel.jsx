@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Segment, Header, Accordion, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import { Accordion, Header, Icon, Image, Segment } from 'semantic-ui-react';
 
 class MetaPanel extends Component {
   state = {
@@ -19,9 +19,9 @@ class MetaPanel extends Component {
     const { currentChannel, isPrivateChannel } = this.props;
 
     return isPrivateChannel ? null : (
-      <Segment key={currentChannel.id}>
+      <Segment key={currentChannel.id} loading={!currentChannel.id}>
         <Header as="h3" attached="top">
-          About # {currentChannel.name}
+          About # {currentChannel.name && currentChannel.name}
         </Header>
         <Accordion styled attached="true">
           <Accordion.Title
@@ -34,7 +34,7 @@ class MetaPanel extends Component {
             Channel Details
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 0}>
-            channel details
+            {currentChannel.details && currentChannel.details}
           </Accordion.Content>
           <Accordion.Title
             active={activeIndex === 1}
@@ -58,7 +58,13 @@ class MetaPanel extends Component {
             Created By
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 2}>
-            created by
+            <Image
+              src={
+                currentChannel.createdBy.avatar &&
+                currentChannel.createdBy.avatar
+              }
+            />
+            {currentChannel.createdBy.name && currentChannel.createdBy.name}
           </Accordion.Content>
         </Accordion>
       </Segment>
