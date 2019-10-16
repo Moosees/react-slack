@@ -36,6 +36,13 @@ export const setChannelStar = isChannelStarred => {
   };
 };
 
+export const setUserPosts = userPosts => {
+  return {
+    type: actionTypes.SET_USER_POSTS,
+    payload: userPosts
+  };
+};
+
 // Search Action
 export const setSearchTerm = searchTerm => {
   return {

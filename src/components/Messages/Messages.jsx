@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Comment } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
-import { setNumUniqueUsers } from '../../redux/actions';
+import { setNumUniqueUsers, setUserPosts } from '../../redux/actions';
 import Message from './Message';
 
 class Messages extends Component {
@@ -31,13 +31,16 @@ class Messages extends Component {
 
   addMessageListener = channelId => {
     const ref = this.getMessagesRef();
-    const { setNumUniqueUsers } = this.props;
+    const { setNumUniqueUsers, isPrivateChannel } = this.props;
 
     let loadedMessages = [];
 
     ref.child(channelId).on('child_added', snapshot => {
       loadedMessages.push(snapshot.val());
       setNumUniqueUsers(this.countUniqueUsers(loadedMessages));
+      if (!isPrivateChannel) {
+        this.countUserPosts(loadedMessages);
+      }
       this.setState({
         messages: loadedMessages,
         messagesLoading: false
@@ -64,6 +67,21 @@ class Messages extends Component {
       return acc;
     }, []);
     return uniqueUsers.length;
+  };
+
+  countUserPosts = messages => {
+    let userPosts = messages.reduce((acc, message) => {
+      if (message.user.name in acc) {
+        acc[message.user.name].count++;
+      } else {
+        acc[message.user.name] = {
+          avatar: message.user.avatar,
+          count: 1
+        };
+      }
+      return acc;
+    }, {});
+    this.props.setUserPosts(userPosts);
   };
 
   displayMessages = (messages, currentUser) => {
@@ -121,5 +139,5 @@ const mapStateToProps = ({
 
 export default connect(
   mapStateToProps,
-  { setNumUniqueUsers }
+  { setNumUniqueUsers, setUserPosts }
 )(Messages);

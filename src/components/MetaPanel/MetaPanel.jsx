@@ -1,22 +1,44 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Accordion, Header, Icon, Image, Segment } from 'semantic-ui-react';
+// prettier-ignore
+import { Accordion, Header, Icon, Image, List, Segment } from 'semantic-ui-react';
 
 class MetaPanel extends Component {
   state = {
     activeIndex: 0
   };
 
-  setActiveIndex = (evt, titleProps) => {
+  setActiveIndex = (_evt, titleProps) => {
     const { index } = titleProps;
     const { activeIndex } = this.state;
     const newIndex = activeIndex === index ? -1 : index;
     this.setState({ activeIndex: newIndex });
   };
 
+  displayTopPosters = userPosts => {
+    const posts = Object.entries(userPosts)
+      .sort((a, b) => b[1].count - a[1].count)
+      .filter((_x, i) => i < 5)
+      .map(([key, val], i) => (
+        <List.Item key={i}>
+          <Image avatar src={val.avatar} />
+          <List.Content>
+            <List.Header>{key}</List.Header>
+            <List.Description>{this.formatCount(val.count)}</List.Description>
+          </List.Content>
+        </List.Item>
+      ));
+    return posts;
+  };
+
+  formatCount = count => {
+    const plural = !(count === 1);
+    return `${count} post${plural ? 's' : ''}`;
+  };
+
   render() {
     const { activeIndex } = this.state;
-    const { currentChannel, isPrivateChannel } = this.props;
+    const { currentChannel, isPrivateChannel, userPosts } = this.props;
 
     return isPrivateChannel ? null : (
       <Segment key={currentChannel.id} loading={!currentChannel.id}>
@@ -46,7 +68,11 @@ class MetaPanel extends Component {
             Top Posters
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 1}>
-            top posters
+            <List>
+              {activeIndex === 1 &&
+                userPosts &&
+                this.displayTopPosters(userPosts)}
+            </List>
           </Accordion.Content>
           <Accordion.Title
             active={activeIndex === 2}
@@ -76,10 +102,11 @@ class MetaPanel extends Component {
 }
 
 const mapStateToProps = ({
-  channel: { currentChannel, isPrivateChannel }
+  channel: { currentChannel, isPrivateChannel, userPosts }
 }) => ({
   currentChannel,
-  isPrivateChannel
+  isPrivateChannel,
+  userPosts
 });
 
 export default connect(mapStateToProps)(MetaPanel);

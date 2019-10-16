@@ -6,6 +6,7 @@ export const CLEAR_USER = 'CLEAR_USER';
 export const SET_CURRENT_CHANNEL = 'SET_CURRENT_CHANNEL';
 export const SET_NUM_UNIQUE_USERS = 'SET_NUM_UNIQUE_USERS';
 export const SET_CHANNEL_STAR = 'SET_CHANNEL_STAR';
+export const SET_USER_POSTS = 'SET_USER_POSTS';
 
 // Search Type
 export const SET_SEARCH_TERM = 'SET_SEARCH_TERM';

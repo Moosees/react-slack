@@ -19,7 +19,8 @@ const INITIAL_CHANNEL_STATE = {
   isPrivateChannel: false,
   isChannelStarred: false,
   firstLoad: true,
-  numUniqueUsers: 0
+  numUniqueUsers: 0,
+  userPosts: null
 };
 
 const user_reducer = (state = INITIAL_USER_STATE, action) => {
@@ -62,6 +63,12 @@ const channel_reducer = (state = INITIAL_CHANNEL_STATE, action) => {
       return {
         ...state,
         isChannelStarred: action.payload
+      };
+
+    case actionTypes.SET_USER_POSTS:
+      return {
+        ...state,
+        userPosts: action.payload
       };
 
     default:
