@@ -1,18 +1,39 @@
 import React, { Component } from 'react';
 import { SliderPicker } from 'react-color';
+import firebase from '../../firebase/firebase';
+import { connect } from 'react-redux';
 // prettier-ignore
-import { Button, Divider, Header, Icon, Label, Menu, Modal, Sidebar } from 'semantic-ui-react';
+import { Button, Divider, Header, Icon, Label, Menu, Modal, Sidebar, Segment } from 'semantic-ui-react';
 
 class ColorPanel extends Component {
   state = {
-    modalOpen: false
+    modalOpen: false,
+    primaryColor: '#40bf43',
+    secondaryColor: '#2d4d86',
+    usersRef: firebase.database().ref('users')
   };
+
+  handleSaveColors = () => {
+    const { primaryColor, secondaryColor, usersRef } = this.state;
+    const { currentUser } = this.props;
+
+    usersRef
+      .child(currentUser.uid)
+      .child('colors')
+      .push()
+      .update({ primaryColor, secondaryColor })
+      .then(() => this.closeModal())
+      .catch(error => console.error(error));
+  };
+
+  handlePrimaryColor = color => this.setState({ primaryColor: color.hex });
+  handleSecondaryColor = color => this.setState({ secondaryColor: color.hex });
 
   openModal = () => this.setState({ modalOpen: true });
   closeModal = () => this.setState({ modalOpen: false });
 
   render() {
-    const { modalOpen } = this.state;
+    const { modalOpen, primaryColor, secondaryColor } = this.state;
 
     return (
       <Sidebar
@@ -28,14 +49,22 @@ class ColorPanel extends Component {
         <Modal basic open={modalOpen} onClose={this.closeModal}>
           <Header icon="paint brush" content="Chose app colors" />
           <Modal.Content>
-            <Label content="Primary Color" />
-            <SliderPicker />
-            <Divider />
-            <Label content="Secondary Color" />
-            <SliderPicker />
+            <Segment inverted>
+              <Label content="Primary Color" />
+              <SliderPicker
+                color={primaryColor}
+                onChange={this.handlePrimaryColor}
+              />
+              <Divider />
+              <Label content="Secondary Color" />
+              <SliderPicker
+                color={secondaryColor}
+                onChange={this.handleSecondaryColor}
+              />
+            </Segment>
           </Modal.Content>
           <Modal.Actions>
-            <Button color="green" inverted>
+            <Button color="green" inverted onClick={this.handleSaveColors}>
               <Icon name="checkmark" /> Save Colors
             </Button>
             <Button color="red" inverted onClick={this.closeModal}>
@@ -48,4 +77,8 @@ class ColorPanel extends Component {
   }
 }
 
-export default ColorPanel;
+const mapStateToProps = ({ user: { currentUser } }) => ({
+  currentUser
+});
+
+export default connect(mapStateToProps)(ColorPanel);
