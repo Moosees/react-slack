@@ -14,6 +14,7 @@ body,
   padding-bottom: 2em;
 }
 
+/* Messages */
 .messages {
   height: calc(100vh - 235px);
   overflow-y: scroll;
@@ -42,7 +43,27 @@ body,
   margin: 0 !important;
 }
 
+/* SidePanel */
 .side-panel {
   background-color: #4c3c4c !important;
   font-size: 1.2rem !important;
+}
+
+/* ColorPanel */
+.color__container {
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  width: 35px;
+}
+
+.color__square {
+  height: 35px;
+  width: 35px;
+}
+
+.color__overlay {
+  height: 35px;
+  transform: rotate(225deg);
+  width: 85px;
 }
