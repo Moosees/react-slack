@@ -128,7 +128,7 @@ class Channels extends Component {
           style={{ opacity: '0.7' }}
           active={channel.id === this.props.currentChannel.id}
           onClick={() =>
-            channel.id === this.state.channel.id
+            channel.id === this.props.currentChannel.id
               ? this.clearNotifications()
               : this.changeChannel(channel)
           }

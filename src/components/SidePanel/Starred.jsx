@@ -59,7 +59,9 @@ class Starred extends Component {
           style={{ opacity: '0.7' }}
           active={channel.id === this.props.currentChannel.id}
           onClick={() => this.changeChannel(channel)}
-        ></Menu.Item>
+        >
+          # {channel.name}
+        </Menu.Item>
       ))
     );
   };
