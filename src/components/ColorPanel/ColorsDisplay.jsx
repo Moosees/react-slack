@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Divider } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
+import { setColors } from '../../redux/actions';
 
 class ColorsDisplay extends Component {
   state = {
@@ -27,6 +28,10 @@ class ColorsDisplay extends Component {
     });
   };
 
+  handleSetColors = (primaryColor, secondaryColor) => {
+    this.props.setColors(primaryColor, secondaryColor);
+  };
+
   render() {
     const { userColors } = this.state;
 
@@ -36,7 +41,12 @@ class ColorsDisplay extends Component {
           userColors.map((color, i) => (
             <React.Fragment key={i}>
               <Divider />
-              <div className="color__container">
+              <div
+                className="color__container"
+                onClick={() =>
+                  this.handleSetColors(color.primaryColor, color.secondaryColor)
+                }
+              >
                 <div
                   className="color__square"
                   style={{ backgroundColor: color.primaryColor }}
@@ -58,4 +68,7 @@ const mapStateToProps = ({ user: { currentUser } }) => ({
   currentUser
 });
 
-export default connect(mapStateToProps)(ColorsDisplay);
+export default connect(
+  mapStateToProps,
+  { setColors }
+)(ColorsDisplay);

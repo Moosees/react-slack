@@ -50,3 +50,14 @@ export const setSearchTerm = searchTerm => {
     payload: searchTerm
   };
 };
+
+// Colors Action
+export const setColors = (primaryColor, secondaryColor) => {
+  return {
+    type: actionTypes.SET_COLORS,
+    payload: {
+      primaryColor,
+      secondaryColor
+    }
+  };
+};

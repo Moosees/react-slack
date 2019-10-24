@@ -23,6 +23,11 @@ const INITIAL_CHANNEL_STATE = {
   userPosts: null
 };
 
+const INITIAL_COLORS_STATE = {
+  primaryColor: '#4c3c4c',
+  secondaryColor: '#eee'
+};
+
 const user_reducer = (state = INITIAL_USER_STATE, action) => {
   switch (action.type) {
     case actionTypes.SET_USER:
@@ -89,10 +94,25 @@ const search_reducer = (state = { searchTerm: '' }, action) => {
   }
 };
 
+const colors_reducer = (state = INITIAL_COLORS_STATE, action) => {
+  switch (action.type) {
+    case actionTypes.SET_COLORS:
+      return {
+        ...state,
+        primaryColor: action.payload.primaryColor,
+        secondaryColor: action.payload.secondaryColor
+      };
+
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
   user: user_reducer,
   channel: channel_reducer,
-  search: search_reducer
+  search: search_reducer,
+  colors: colors_reducer
 });
 
 export default rootReducer;

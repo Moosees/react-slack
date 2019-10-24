@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import './App.css';
 import ColorPanel from './ColorPanel/ColorPanel';
@@ -6,9 +7,13 @@ import MessagesContainer from './Messages/MessagesContainer';
 import MetaPanel from './MetaPanel/MetaPanel';
 import SidePanel from './SidePanel/SidePanel';
 
-const App = () => {
+const App = ({ secondaryColor }) => {
   return (
-    <Grid columns="equal" className="app">
+    <Grid
+      columns="equal"
+      className="app"
+      style={{ backgroundColor: secondaryColor }}
+    >
       <ColorPanel />
       <SidePanel />
       <Grid.Column style={{ marginLeft: '320px' }}>
@@ -21,4 +26,8 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = ({ colors: { secondaryColor } }) => ({
+  secondaryColor
+});
+
+export default connect(mapStateToProps)(App);

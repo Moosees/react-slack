@@ -5,7 +5,6 @@ body,
 }
 
 .app {
-  background-color: #eee;
   height: 100vh;
   margin: 0 !important;
 }
@@ -45,13 +44,13 @@ body,
 
 /* SidePanel */
 .side-panel {
-  background-color: #4c3c4c !important;
   font-size: 1.2rem !important;
 }
 
 /* ColorPanel */
 .color__container {
   border-radius: 3px;
+  cursor: pointer;
   overflow: hidden;
   position: relative;
   width: 35px;
