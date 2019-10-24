@@ -10,21 +10,22 @@ body,
 }
 
 .menu {
-  padding-bottom: 2em;
+  padding-bottom: 2rem;
 }
 
 /* Messages */
 .messages {
-  height: calc(100vh - 235px);
+  height: calc(100vh - 225px);
   overflow-y: scroll;
 }
 
 .message-form {
   bottom: 0;
   left: 0;
+  margin-bottom: 0.5rem !important;
   margin-left: 320px !important;
   position: fixed !important;
-  right: 0.5em;
+  right: 0.5rem;
   z-index: 200;
 }
 
@@ -34,7 +35,7 @@ body,
 }
 
 .message__image {
-  padding: 1em;
+  padding: 1rem;
 }
 
 .progress-bar {

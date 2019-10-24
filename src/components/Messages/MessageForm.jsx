@@ -191,7 +191,7 @@ class MessageForm extends Component {
           <Button
             style={{ minWidth: '12em', minHeight: '3em' }}
             disabled={uploadState === 'uploading'}
-            color="teal"
+            color="blue"
             content={
               percentUploaded ? (
                 <ProgressBar percentUploaded={percentUploaded} />

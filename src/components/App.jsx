@@ -16,7 +16,7 @@ const App = ({ secondaryColor }) => {
     >
       <ColorPanel />
       <SidePanel />
-      <Grid.Column style={{ marginLeft: '320px' }}>
+      <Grid.Column style={{ marginLeft: '310px', paddingRight: '0' }}>
         <MessagesContainer />
       </Grid.Column>
       <Grid.Column width={4}>
