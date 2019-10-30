@@ -11,7 +11,13 @@ class UserPanel extends Component {
     modalOpen: false,
     previewImage: null,
     croppedImageUrl: null,
-    blob: null
+    blob: null,
+    metadata: {
+      contentType: 'image/jpeg'
+    },
+    storageRef: firebase.storage().ref(),
+    currentUserRef: firebase.auth().currentUser,
+    usersRef: firebase.database().ref('users')
   };
 
   handleSignOut = () => {
@@ -40,7 +46,31 @@ class UserPanel extends Component {
     }
   };
 
-  handleSave = () => {};
+  handleSave = () => {
+    const { storageRef, currentUserRef, blob, metadata } = this.state;
+    storageRef
+      .child(`avatars/user-${currentUserRef.uid}`)
+      .put(blob, metadata)
+      .then(snapshot => {
+        snapshot.ref.getDownloadURL().then(url => this.changeAvatar(url));
+      });
+  };
+
+  changeAvatar = url => {
+    const { currentUserRef, usersRef } = this.state;
+    currentUserRef
+      .updateProfile({
+        photoURL: url
+      })
+      .then(() => this.closeModal())
+      .catch(error => console.error(error));
+
+    usersRef
+      .child(currentUserRef.uid)
+      .update({ avatar: url })
+      .then(() => console.log('Avatar changed'))
+      .catch(error => console.error(error));
+  };
 
   openModal = () => this.setState({ modalOpen: true });
   closeModal = () => this.setState({ modalOpen: false });
