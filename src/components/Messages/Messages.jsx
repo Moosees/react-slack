@@ -4,6 +4,7 @@ import { Comment } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
 import { setNumUniqueUsers, setUserPosts } from '../../redux/actions';
 import Message from './Message';
+import Typing from './Typing';
 
 class Messages extends Component {
   state = {
@@ -121,6 +122,10 @@ class Messages extends Component {
         {searchTerm
           ? this.displaySearch(messages, currentUser, searchTerm)
           : this.displayMessages(messages, currentUser)}
+        <div className="user-typing">
+          <span className="user-typing__user">someone</span>is typing
+          <Typing />
+        </div>
       </Comment.Group>
     );
   }
