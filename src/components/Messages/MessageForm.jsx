@@ -11,6 +11,7 @@ class MessageForm extends Component {
     message: '',
     messagesRef: firebase.database().ref('messages'),
     privateMessagesRef: firebase.database().ref('privateMessages'),
+    typingRef: firebase.database().ref('typing'),
     modalOpen: false,
     percentUploaded: 0,
     storageRef: firebase.storage().ref(),
@@ -24,6 +25,39 @@ class MessageForm extends Component {
     this.setState({
       [evt.target.name]: evt.target.value
     });
+  };
+
+  handleKeyDown = () => {
+    const { message } = this.state;
+    if (message) {
+      this.addTypingRef();
+    } else {
+      this.removeTypingRef();
+    }
+  };
+
+  addTypingRef = () => {
+    const { currentChannel, currentUser } = this.props;
+    const { typingRef } = this.state;
+
+    if (currentChannel.id && currentUser.uid) {
+      typingRef
+        .child(currentChannel.id)
+        .child(currentUser.uid)
+        .set(currentUser.displayName);
+    }
+  };
+
+  removeTypingRef = () => {
+    const { currentChannel, currentUser } = this.props;
+    const { typingRef } = this.state;
+
+    if (currentChannel.id && currentUser.uid) {
+      typingRef
+        .child(currentChannel.id)
+        .child(currentUser.uid)
+        .remove();
+    }
   };
 
   openModal = () => this.setState({ modalOpen: true });
@@ -138,6 +172,7 @@ class MessageForm extends Component {
         .set(this.createMessage())
         .then(() => {
           this.setState({ message: '', loading: false, errors: [] });
+          this.removeTypingRef();
         })
         .catch(error => {
           console.error(error);
@@ -182,6 +217,7 @@ class MessageForm extends Component {
                   : ''
               }
               onChange={this.handleChange}
+              onKeyDown={this.handleKeyDown}
             />
           </Form>
         </Segment>

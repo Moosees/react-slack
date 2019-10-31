@@ -11,6 +11,7 @@ class Channels extends Component {
     channels: [],
     channelsRef: firebase.database().ref('channels'),
     messagesRef: firebase.database().ref('messages'),
+    typingRef: firebase.database().ref('typing'),
     notifications: []
   };
 
@@ -114,6 +115,7 @@ class Channels extends Component {
 
   changeChannel = channel => {
     const { setCurrentChannel } = this.props;
+    this.removeTypingRef();
     setCurrentChannel(channel, false);
     this.setState({ channel });
   };
@@ -152,6 +154,18 @@ class Channels extends Component {
     return count > 0 ? <Label color="red">{count}</Label> : null;
   };
 
+  removeTypingRef = () => {
+    const { currentChannel, currentUser } = this.props;
+    const { typingRef } = this.state;
+
+    if (currentChannel.id && currentUser.uid) {
+      typingRef
+        .child(currentChannel.id)
+        .child(currentUser.uid)
+        .remove();
+    }
+  };
+
   render() {
     const { channels } = this.state;
 
@@ -171,9 +185,13 @@ class Channels extends Component {
   }
 }
 
-const mapStateToProps = ({ channel: { currentChannel, firstLoad } }) => ({
+const mapStateToProps = ({
+  channel: { currentChannel, firstLoad },
+  user: { currentUser }
+}) => ({
   currentChannel,
-  firstLoad
+  firstLoad,
+  currentUser
 });
 
 export default connect(
