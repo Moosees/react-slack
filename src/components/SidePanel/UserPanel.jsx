@@ -1,3 +1,4 @@
+import md5 from 'md5';
 import React, { Component } from 'react';
 import AvatarEditor from 'react-avatar-editor';
 import { connect } from 'react-redux';
@@ -49,7 +50,9 @@ class UserPanel extends Component {
   handleSave = () => {
     const { storageRef, currentUserRef, blob, metadata } = this.state;
     storageRef
-      .child(`avatars/user-${currentUserRef.uid}`)
+      .child(
+        `avatars/user-${currentUserRef.uid}-${md5(Math.random()).slice(0, 5)}`
+      )
       .put(blob, metadata)
       .then(snapshot => {
         snapshot.ref.getDownloadURL().then(url => this.changeAvatar(url));
