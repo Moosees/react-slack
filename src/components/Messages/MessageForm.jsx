@@ -40,13 +40,14 @@ class MessageForm extends Component {
   };
 
   handleEmojiOpen = () => {
-    this.setState({ emojiOpen: true });
+    this.setState(prev => ({ emojiOpen: !prev.emojiOpen }));
   };
 
   handleAddEmoji = emoji => {
     const { message } = this.state;
     const newMessage = this.colonToUnicode(`${message} ${emoji.colons}`);
     this.setState({ message: newMessage, emojiOpen: false });
+    setTimeout(() => this.messageInputRef.focus(), 0);
   };
 
   // Regex magic
@@ -238,7 +239,7 @@ class MessageForm extends Component {
             autoFocus={true}
             style={{
               position: 'absolute',
-              bottom: '20px',
+              bottom: '65px',
               left: '25px',
               zIndex: '1000'
             }}
@@ -255,7 +256,7 @@ class MessageForm extends Component {
                 label={
                   <>
                     <Button
-                      icon="heart"
+                      icon={emojiOpen ? 'close' : 'heart'}
                       type="button"
                       title="Add emoji"
                       disabled={loading}
@@ -278,6 +279,7 @@ class MessageForm extends Component {
                     ? 'error'
                     : ''
                 }
+                ref={node => (this.messageInputRef = node)}
                 onChange={this.handleChange}
                 onKeyDown={this.handleKeyDown}
               />
