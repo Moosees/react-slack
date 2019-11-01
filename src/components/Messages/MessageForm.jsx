@@ -1,3 +1,5 @@
+import { emojiIndex, Picker } from 'emoji-mart';
+import 'emoji-mart/css/emoji-mart.css';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Input, Segment } from 'semantic-ui-react';
@@ -18,7 +20,8 @@ class MessageForm extends Component {
     uploadState: 'done',
     uploadTask: null,
     loading: false,
-    errors: []
+    errors: [],
+    emojiOpen: false
   };
 
   handleChange = evt => {
@@ -34,6 +37,32 @@ class MessageForm extends Component {
     } else {
       this.removeTypingRef();
     }
+  };
+
+  handleEmojiOpen = () => {
+    this.setState({ emojiOpen: true });
+  };
+
+  handleAddEmoji = emoji => {
+    const { message } = this.state;
+    const newMessage = this.colonToUnicode(`${message} ${emoji.colons}`);
+    this.setState({ message: newMessage, emojiOpen: false });
+  };
+
+  // Regex magic
+  colonToUnicode = message => {
+    return message.replace(/:[A-Za-z0-9_+-]+:/g, x => {
+      x = x.replace(/:/g, '');
+      let emoji = emojiIndex.emojis[x];
+      if (typeof emoji !== 'undefined') {
+        let unicode = emoji.native;
+        if (typeof unicode !== 'undefined') {
+          return unicode;
+        }
+      }
+      x = ':' + x + ':';
+      return x;
+    });
   };
 
   addTypingRef = () => {
@@ -195,57 +224,91 @@ class MessageForm extends Component {
       percentUploaded,
       uploadState,
       loading,
-      errors
+      errors,
+      emojiOpen
     } = this.state;
 
     return (
-      <Segment.Group horizontal className="message-form">
-        <Segment>
-          <Form onSubmit={this.sendMessage}>
-            <Input
-              fluid
-              name="message"
-              value={message}
-              label={<Button icon="add" type="submit" disabled={loading} />}
-              labelPosition="left"
-              placeholder="Write your message"
-              className={
-                errors.some(error =>
-                  error.message.toLowerCase().includes('message')
-                )
-                  ? 'error'
-                  : ''
-              }
-              onChange={this.handleChange}
-              onKeyDown={this.handleKeyDown}
-            />
-          </Form>
-        </Segment>
-        <Segment
-          style={{ flexGrow: '0', padding: '0 1em', alignSelf: 'center' }}
-        >
-          <Button
-            style={{ minWidth: '12em', minHeight: '3em' }}
-            disabled={uploadState === 'uploading'}
-            color="blue"
-            content={
-              percentUploaded ? (
-                <ProgressBar percentUploaded={percentUploaded} />
-              ) : (
-                'Upload Media'
-              )
-            }
-            labelPosition="right"
-            icon="cloud upload"
-            onClick={this.openModal}
+      <>
+        {emojiOpen && (
+          <Picker
+            set="apple"
+            title="Pick your emoji"
+            emoji="point_up"
+            autoFocus={true}
+            style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '25px',
+              zIndex: '1000'
+            }}
+            onSelect={this.handleAddEmoji}
           />
-        </Segment>
-        <FileModal
-          modal={modalOpen}
-          uploadFile={this.uploadFile}
-          closeModal={this.closeModal}
-        />
-      </Segment.Group>
+        )}
+        <Segment.Group horizontal className="message-form">
+          <Segment>
+            <Form onSubmit={this.sendMessage}>
+              <Input
+                fluid
+                name="message"
+                value={message}
+                label={
+                  <>
+                    <Button
+                      icon="heart"
+                      type="button"
+                      title="Add emoji"
+                      disabled={loading}
+                      onClick={this.handleEmojiOpen}
+                    />
+                    <Button
+                      icon="add"
+                      type="submit"
+                      title="Send message"
+                      disabled={loading}
+                    />
+                  </>
+                }
+                labelPosition="left"
+                placeholder="Write your message"
+                className={
+                  errors.some(error =>
+                    error.message.toLowerCase().includes('message')
+                  )
+                    ? 'error'
+                    : ''
+                }
+                onChange={this.handleChange}
+                onKeyDown={this.handleKeyDown}
+              />
+            </Form>
+          </Segment>
+          <Segment
+            style={{ flexGrow: '0', padding: '0 1em', alignSelf: 'center' }}
+          >
+            <Button
+              style={{ minWidth: '12em', minHeight: '3em' }}
+              disabled={uploadState === 'uploading'}
+              color="blue"
+              content={
+                percentUploaded ? (
+                  <ProgressBar percentUploaded={percentUploaded} />
+                ) : (
+                  'Upload Media'
+                )
+              }
+              labelPosition="right"
+              icon="cloud upload"
+              onClick={this.openModal}
+            />
+          </Segment>
+          <FileModal
+            modal={modalOpen}
+            uploadFile={this.uploadFile}
+            closeModal={this.closeModal}
+          />
+        </Segment.Group>
+      </>
     );
   }
 }
