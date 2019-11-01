@@ -29,6 +29,16 @@ class Messages extends Component {
     this.removeListeners(currentChannel.id);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.messagesEnd) {
+      this.scrollToBottom();
+    }
+  }
+
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
+  };
+
   addListeners = channelId => {
     this.addTypingListeners(channelId);
     this.addMessageListener(channelId);
@@ -176,6 +186,7 @@ class Messages extends Component {
           ? this.displaySearch(messages, currentUser, searchTerm)
           : this.displayMessages(messages, currentUser)}
         {this.displayTypingUsers(typingUsers)}
+        <div ref={node => (this.messagesEnd = node)} />
       </Comment.Group>
     );
   }
