@@ -18,6 +18,14 @@ class ColorsDisplay extends Component {
     }
   }
 
+  componentWillUnmount() {
+    const { currentUser } = this.props;
+
+    if (currentUser.uid) {
+      this.removeListener(currentUser.uid);
+    }
+  }
+
   addListener = userId => {
     const { usersRef } = this.state;
 
@@ -26,6 +34,12 @@ class ColorsDisplay extends Component {
       userColors.unshift(snapshot.val());
       this.setState({ userColors });
     });
+  };
+
+  removeListener = userId => {
+    const { usersRef } = this.state;
+
+    usersRef.child(`${userId}/colors`).off();
   };
 
   handleSetColors = (primaryColor, secondaryColor) => {

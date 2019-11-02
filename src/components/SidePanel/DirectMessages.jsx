@@ -13,14 +13,35 @@ class DirectMessages extends Component {
   };
 
   componentDidMount() {
-    if (this.props.currentUser.uid) {
-      this.addListerners(this.props.currentUser.uid);
+    const { currentUser } = this.props;
+
+    if (currentUser.uid) {
+      this.addListerners(currentUser.uid);
     }
   }
 
+  componentWillUnmount() {
+    const { currentUser } = this.props;
+
+    if (currentUser.uid) {
+      this.removeListerners(currentUser.uid);
+    }
+  }
+
+  removeListerners = currentUserId => {
+    const { usersRef, connectedRef, presenceRef } = this.state;
+
+    usersRef.off('child_added');
+    connectedRef.off('value');
+    presenceRef.off('child_added');
+    presenceRef.off('child_removed');
+  };
+
   addListerners = currentUserId => {
+    const { usersRef, connectedRef, presenceRef } = this.state;
+
     let loadedUsers = [];
-    this.state.usersRef.on('child_added', snapshot => {
+    usersRef.on('child_added', snapshot => {
       if (currentUserId !== snapshot.key) {
         let user = snapshot.val();
         user['uid'] = snapshot.key;
@@ -30,9 +51,9 @@ class DirectMessages extends Component {
       }
     });
 
-    this.state.connectedRef.on('value', snapshot => {
+    connectedRef.on('value', snapshot => {
       if (snapshot.val() === true) {
-        const ref = this.state.presenceRef.child(currentUserId);
+        const ref = presenceRef.child(currentUserId);
         ref.set(true);
         ref.onDisconnect().remove(error => {
           if (error !== null) {
@@ -42,13 +63,13 @@ class DirectMessages extends Component {
       }
     });
 
-    this.state.presenceRef.on('child_added', snapshot => {
+    presenceRef.on('child_added', snapshot => {
       if (currentUserId !== snapshot.key) {
         this.addStatusToUser(snapshot.key, true);
       }
     });
 
-    this.state.presenceRef.on('child_removed', snapshot => {
+    presenceRef.on('child_removed', snapshot => {
       if (currentUserId !== snapshot.key) {
         this.addStatusToUser(snapshot.key, false);
       }
@@ -56,7 +77,9 @@ class DirectMessages extends Component {
   };
 
   addStatusToUser = (userId, connected = true) => {
-    const updatedUsers = this.state.users.reduce((acc, user) => {
+    const { users } = this.state;
+
+    const updatedUsers = users.reduce((acc, user) => {
       if (user.uid === userId) {
         user['status'] = connected ? 'online' : 'offline';
       }

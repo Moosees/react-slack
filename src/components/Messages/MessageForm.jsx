@@ -24,6 +24,15 @@ class MessageForm extends Component {
     emojiOpen: false
   };
 
+  componentWillUnmount() {
+    const { uploadTask } = this.state;
+
+    if (uploadTask !== null) {
+      uploadTask.cancel();
+      this.setState({ uploadTask: null });
+    }
+  }
+
   handleChange = evt => {
     this.setState({
       [evt.target.name]: evt.target.value

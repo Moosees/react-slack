@@ -15,22 +15,31 @@ class Messages extends Component {
     connectedRef: firebase.database().ref('.info/connected'),
     messages: [],
     messagesLoading: true,
-    typingUsers: []
+    typingUsers: [],
+    listeners: []
   };
 
   componentDidMount() {
     const { currentChannel, currentUser } = this.props;
-    if (currentChannel && currentUser) {
-      this.addListeners(currentChannel.id);
+    const { listeners } = this.state;
+
+    if (currentChannel.id && currentUser.uid) {
+      if (listeners.length > 0) {
+        this.removeListeners(listeners);
+      }
+      this.addListeners(currentChannel.id, currentUser.uid);
     }
   }
 
   componentWillUnmount() {
-    const { currentChannel } = this.props;
-    this.removeListeners(currentChannel.id);
+    const { listeners } = this.state;
+
+    if (listeners.length > 0) {
+      this.removeListeners(listeners);
+    }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_prevProps, _prevState) {
     if (this.messagesEnd) {
       this.scrollToBottom();
     }
@@ -40,18 +49,45 @@ class Messages extends Component {
     this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
   };
 
-  addListeners = channelId => {
-    this.addTypingListeners(channelId);
+  removeListeners = listeners => {
+    listeners.forEach(listener => {
+      if (listener.child) {
+        listener.ref.child(listener.child).off(listener.event);
+      } else {
+        listener.ref.off(listener.event);
+      }
+    });
+  };
+
+  addToListeners = (child, ref, event) => {
+    const { listeners } = this.state;
+
+    const index = listeners.findIndex(
+      listener =>
+        listener.child === child &&
+        listener.ref === ref &&
+        listener.event === event
+    );
+
+    if (index !== -1) {
+      const newListener = { child, ref, event };
+      this.setState(prevState => ({
+        listeners: prevState.listeners.concat(newListener)
+      }));
+    }
+  };
+
+  addListeners = (channelId, userId) => {
+    this.addTypingListeners(channelId, userId);
     this.addMessageListener(channelId);
   };
 
-  addTypingListeners = channelId => {
-    const { currentUser } = this.props;
+  addTypingListeners = (channelId, userId) => {
     const { typingRef, connectedRef } = this.state;
     let typingUsers = [];
 
     typingRef.child(channelId).on('child_added', snapshot => {
-      if (snapshot.key !== currentUser.uid) {
+      if (snapshot.key !== userId) {
         typingUsers = typingUsers.concat({
           id: snapshot.key,
           name: snapshot.val()
@@ -59,6 +95,7 @@ class Messages extends Component {
         this.setState({ typingUsers });
       }
     });
+    this.addToListeners(channelId, typingRef, 'child_added');
 
     typingRef.child(channelId).on('child_removed', snapshot => {
       const index = typingUsers.findIndex(user => user.id === snapshot.key);
@@ -67,12 +104,13 @@ class Messages extends Component {
         this.setState({ typingUsers });
       }
     });
+    this.addToListeners(channelId, typingRef, 'child_removed');
 
     connectedRef.on('value', snapshot => {
       if (snapshot.val() === true) {
         typingRef
           .child(channelId)
-          .child(currentUser.uid)
+          .child(userId)
           .onDisconnect()
           .remove(error => {
             if (error !== null) {
@@ -81,6 +119,7 @@ class Messages extends Component {
           });
       }
     });
+    this.addToListeners(null, connectedRef, 'value');
   };
 
   addMessageListener = channelId => {
@@ -100,11 +139,7 @@ class Messages extends Component {
         messagesLoading: false
       });
     });
-  };
-
-  removeListeners = channelId => {
-    const ref = this.getMessagesRef();
-    ref.child(channelId).off();
+    this.addToListeners(channelId, ref, 'child_added');
   };
 
   getMessagesRef = () => {

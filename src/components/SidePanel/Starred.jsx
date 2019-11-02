@@ -13,13 +13,36 @@ class Starred extends Component {
 
   componentDidMount() {
     const { currentUser } = this.props;
+
     if (currentUser.uid) {
       this.addListeners(currentUser.uid);
     }
   }
 
+  componentWillUnmount() {
+    const { currentUser } = this.props;
+
+    if (currentUser.uid) {
+      this.removeListeners(currentUser.uid);
+    }
+  }
+
+  removeListeners = userId => {
+    const { usersRef } = this.state;
+
+    usersRef
+      .child(userId)
+      .child('starred')
+      .off('child_added');
+    usersRef
+      .child(userId)
+      .child('starred')
+      .off('child_removed');
+  };
+
   addListeners = userId => {
     const { usersRef } = this.state;
+
     usersRef
       .child(userId)
       .child('starred')
