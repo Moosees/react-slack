@@ -43,6 +43,70 @@ body,
   margin: 0 !important;
 }
 
+.skeleton {
+  height: 40px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.skeleton__avatar {
+  animation: sweep 2s infinite;
+  background-image: linear-gradient(
+    to left,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  content: '';
+  display: block;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 50%;
+}
+
+.skeleton__avatar {
+  background-color: rgba(58, 57, 57, 0.3);
+  border-radius: 3px;
+  height: 35px;
+  width: 35px;
+}
+
+.skeleton__author {
+  background-color: rgba(58, 57, 57, 0.3);
+  border-radius: 3px;
+  bottom: 30px;
+  height: 10px;
+  left: 40px;
+  position: absolute;
+  right: 0;
+  width: 120px;
+}
+
+.skeleton__details {
+  background-color: rgba(58, 57, 57, 0.3);
+  border-radius: 3px;
+  bottom: 5px;
+  height: 20px;
+  left: 40px;
+  position: absolute;
+  right: 20px;
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 /* SidePanel */
 .side-panel {
   font-size: 1.2rem !important;

@@ -4,6 +4,7 @@ import { Comment } from 'semantic-ui-react';
 import firebase from '../../firebase/firebase';
 import { setNumUniqueUsers, setUserPosts } from '../../redux/actions';
 import Message from './Message';
+import Skeleton from './Skeleton';
 import Typing from './Typing';
 
 class Messages extends Component {
@@ -137,6 +138,16 @@ class Messages extends Component {
     this.props.setUserPosts(userPosts);
   };
 
+  displaySkeleton = loading => {
+    return loading ? (
+      <>
+        {[...Array(10)].map((_x, i) => (
+          <Skeleton key={i} />
+        ))}
+      </>
+    ) : null;
+  };
+
   displayMessages = (messages, currentUser) => {
     return (
       messages.length > 0 &&
@@ -177,11 +188,12 @@ class Messages extends Component {
   };
 
   render() {
-    const { messages, typingUsers } = this.state;
+    const { messages, typingUsers, messagesLoading } = this.state;
     const { currentUser, searchTerm } = this.props;
 
     return (
       <Comment.Group className="messages">
+        {this.displaySkeleton(messagesLoading)}
         {searchTerm
           ? this.displaySearch(messages, currentUser, searchTerm)
           : this.displayMessages(messages, currentUser)}
