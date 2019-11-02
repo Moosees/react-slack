@@ -30,8 +30,13 @@ class MessageForm extends Component {
     });
   };
 
-  handleKeyDown = () => {
+  handleKeyDown = evt => {
     const { message } = this.state;
+
+    if (evt.ctrlKey && evt.keyCode === 13) {
+      this.sendMessage();
+    }
+
     if (message) {
       this.addTypingRef();
     } else {
