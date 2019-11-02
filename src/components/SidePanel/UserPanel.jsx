@@ -51,7 +51,7 @@ class UserPanel extends Component {
     const { storageRef, currentUserRef, blob, metadata } = this.state;
     storageRef
       .child(
-        `avatars/user-${currentUserRef.uid}-${md5(Math.random()).slice(0, 5)}`
+        `avatars/users/${currentUserRef.uid}/${md5(Math.random()).slice(0, 8)}`
       )
       .put(blob, metadata)
       .then(snapshot => {
